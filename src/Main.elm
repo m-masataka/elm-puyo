@@ -1,16 +1,22 @@
 import Array exposing (Array)
 import Browser
-import Browser.Events exposing (onKeyDown)
 import Html exposing (..)
+import Browser.Events exposing (onKeyDown)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
 import Json.Decode as Decode
+import Html.Events exposing (onClick)
 import Time
 import Task
 import Debug
 import List.Extra as ListEx
 import Random
+import Random.List as RandomList
 import Styles
+import Status exposing (..)
+import KeyAction exposing (..)
+import Puyo exposing (..)
+import Board exposing (..)
+import BoardUtils exposing (..)
 import FeatherIcons
  
 
@@ -20,45 +26,13 @@ type alias Model =
     , score: Int
     , gripPositions: List (Int, Int)
     , board: Board
-    , state: Status
+    , status: Status
     }
 
 
-type alias Board =
-    Array Row
-
-
-type alias Row =
-    Array Cell
-
-
-type Cell
-    = Tile Int
-    | Empty
-
-type KeyName
-    = Down
-    | Right
-    | Left
-    | Space
-    | Other
-
-type Status
-    = Normal
-    | Remove
-    | Fall
-    | New
-
-puyo = [1, 2, 3, 4]
-
 init : () -> ( Model, Cmd Msg )
 init _ =
-    let
-        board =
-            setBoardByList [(1, 0),(1,1)] (Tile 1)
-            <| Array.repeat 10 <| Array.repeat 8<| Empty
-    in
-    ( Model ( Time.millisToPosix 0) 0 [(1,0),(1,1)] board Normal
+    ( Model ( Time.millisToPosix 0) 0 [(1,0),(1,1)] initBoard Normal
       , Cmd.none
     )
 
@@ -66,7 +40,7 @@ init _ =
 type Msg
     = Tick Time.Posix
     | KeyMsg KeyName
-    | RandPuyo Int
+    | RandPuyo (List Puyo)
     | Clear
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -74,7 +48,7 @@ update msg model =
     case msg of
         KeyMsg keyname -> 
             let
-                ngp = case model.state of
+                ngp = case model.status of
                     Remove ->
                         model.gripPositions
                     Fall ->
@@ -90,9 +64,12 @@ update msg model =
                         List.sortWith compareRightList gpl
                     Left ->
                         List.sortWith compareLeftList gpl
+                    Down ->
+                        List.sortWith compareDownList gpl
                     _ ->
-                        List.sortWith compareFallList gpl
-                board = updateBoardByList sorted model.board
+                        gpl
+                -- board = updateBoardByList sorted model.board
+                board = updateBoardByGripPositions model.gripPositions ngp model.board
             in
             ( { model | board = board, gripPositions = ngp }
             , Cmd.none
@@ -100,36 +77,17 @@ update msg model =
         Tick newTime ->
             let
                 ngp = gripChange model.gripPositions model.board Down
-                removeList = List.map (\n -> getRemoveList n model.board) puyo
+                removeList = List.map (\n -> getRemoveList n model.board) puyoList
                              |> List.concat
                 falledBoard = fallDown model.board
-                state = 
-                    case model.state of
-                        Normal ->
-                            if model.gripPositions == ngp then
-                                Fall
-                            else
-                                Normal
-                        Remove ->
-                            if List.length removeList > 0 then
-                                Remove
-                            else if model.board == falledBoard then
-                                New
-                            else
-                                Fall
-                        Fall ->
-                            Remove
-                        _ ->
-                            Normal
-                        
+                status = changeStatus model.status model.gripPositions ngp removeList model.board falledBoard
                 gpl = List.map2 Tuple.pair model.gripPositions ngp
                     |> List.map (\((x, y),(z,o)) ->
                            [(x, y), (z, o)]
                         )
-                    |> List.sortWith compareFallList 
-
+                    |> List.sortWith compareDownList 
                 board =
-                    case state of
+                    case status of
                         Normal ->
                             updateBoardByList gpl model.board
                         Remove ->
@@ -141,21 +99,22 @@ update msg model =
                             model.board
 
             in
-            ( { model |  board = board, gripPositions = ngp ,state = state}
-            , Random.generate RandPuyo (Random.int 1 4)
+            ( { model |  board = board, gripPositions = ngp ,status = status}
+            , Random.generate RandPuyo (RandomList.shuffle puyoList)
             )
-        RandPuyo rand ->
+        RandPuyo puyolist ->
             let
                 board =
-                    case model.state of
+                    case model.status of
                         New -> 
-                            setBoardByList [(1,0),(1,1)] (Tile rand) model.board
+                            setBoard (ListEx.getAt 0 initPositions |> Maybe.withDefault (1,0))  ( Tile ( ListEx.getAt 0 puyolist |> Maybe.withDefault Red )) model.board
+                            |> setBoard (ListEx.getAt 1 initPositions |> Maybe.withDefault (1,1)) ( Tile ( ListEx.getAt 1 puyolist |> Maybe.withDefault Red ))
                         _ ->
                             model.board
                 gps = 
-                    case model.state of
+                    case model.status of
                         New -> 
-                            [(1,0),(1,1)]
+                            initPositions
                         _ ->
                             model.gripPositions
             in
@@ -163,119 +122,11 @@ update msg model =
             , Cmd.none
             )
         Clear ->
-            let
-                initBoard =
-                    Array.repeat 10 <| Array.repeat 8<| Empty
-                board = setBoardByList [(0, 2),(0,3)] (Tile 1) initBoard
-            in
-            ( { model | score = 0 , board = board, gripPositions = [(1,0),(1,1)]}
+            ( { model | score = 0 , board = initBoard, gripPositions = initPositions, status = Normal}
             , Cmd.none
             )
 
-fallDown : Board -> Board
-fallDown board =
-    let
-        el = getPositionList board Empty
-    in
-        puyo
-            |> List.map (\n -> getPositionList board (Tile n))
-            |> List.concat
-            |> (\dl -> 
-                   List.map (\(x, y) ->
-                       List.filter (\(ex, ey) -> ex == x && ey > y ) el
-                           |> List.length
-                   ) dl
-                   |> List.map2 Tuple.pair dl
-                   |> List.map (\((x, y), num) ->
-                       [(x, y), (x, y + num)]
-                      )
-               )
-            |> List.sortWith compareFallList 
-            |> (\l -> updateBoardByList l board)
 
-compareRightList : List (Int, Int) -> List (Int, Int) -> Order
-compareRightList la lb =
-    case compare (getComparableValue la Right) (getComparableValue lb Right) of
-        LT -> GT
-        EQ -> EQ
-        GT -> LT
- 
-compareLeftList : List (Int, Int) -> List (Int, Int) -> Order
-compareLeftList la lb =
-    case compare (getComparableValue la Left) (getComparableValue lb Left) of
-        LT -> GT
-        EQ -> EQ
-        GT -> LT
- 
-
-compareFallList : List (Int, Int) -> List (Int, Int) -> Order
-compareFallList la lb =
-    case compare (getComparableValue la Down) (getComparableValue lb Down) of
-        LT -> GT
-        EQ -> EQ
-        GT -> LT
-
-getComparableValue : List (Int, Int)  -> KeyName -> Int
-getComparableValue list  keyname =
-    case ListEx.getAt 0 list of
-        Just (x, y) ->
-            case keyname of
-                Right ->
-                    x
-                Left ->
-                    -x
-                _ ->
-                    y
-        Nothing ->
-            -1
- 
-updateBoardByList : List ( List (Int, Int)) -> Board -> Board
-updateBoardByList list board =
-    case ListEx.getAt 0 list of
-        Just p ->
-            updateBoard board (ListEx.getAt 0 p |> Maybe.withDefault (0, 0) ) (ListEx.getAt 1 p |> Maybe.withDefault (0, 0))
-                |> updateBoardByList (ListEx.removeAt 0 list)
-        Nothing ->
-            board
-
-setBoardByList : List (Int, Int) -> Cell -> Board -> Board
-setBoardByList list c board =
-    case ListEx.getAt 0 list of
-        Just p ->
-            setBoard p c board
-                |> setBoardByList (ListEx.removeAt 0 list) c
-        Nothing ->
-            board
-
-getRemoveList : Int -> Board -> List (Int, Int)
-getRemoveList n board =
-    getPositionList board (Tile n)
-    |> (\pl -> List.map (\l -> searchCell l pl ) pl)
-    |> (\nlist ->  getPositionList board (Tile n) |> List.map2 Tuple.pair nlist)
-    |> List.filterMap
-        (\( num , position ) -> 
-            if num > 3 then
-                Just position
-            else
-                Nothing
-        )
-
-canDrop : List (Int, Int) -> Board -> Bool
-canDrop list board =
-    let 
-        nextPositions = List.map (\(x, y) -> (x, y + 1) ) list
-        f = List.map (\np -> 
-                setBoardByList list Empty board
-                |> decideMove np
-            ) nextPositions
-            |> List.sum
-    in 
-    if f == 0 then
-        True
-    else
-        False
-       
- 
 removePuyo : List (Int, Int) -> Board -> Board
 removePuyo list board =
     case ListEx.getAt 0 list of
@@ -284,27 +135,6 @@ removePuyo list board =
                  |> removePuyo (ListEx.removeAt 0 list)
         Nothing ->
             board
-
-searchCell : (Int, Int) -> List (Int, Int) -> Int
-searchCell (x, y) list =
-    let
-        rlist = ListEx.elemIndex (x, y) list
-            |> (\rindex -> case rindex of
-                    Just ri -> 
-                        ListEx.removeAt ri list
-                    Nothing ->
-                        list
-               )
-    in
-    [ (x-1, y), (x+1,y), (x, y-1), (x,y+1)]
-        |> List.filter (\ll -> List.member ll rlist)
-        |> (\nl -> if List.length nl > 0 then
-                List.map (\l -> searchCell l rlist ) nl
-                |> List.sum
-            else
-                0
-           )
-        |> (\n -> n + 1)
 
 
 gripChange : List (Int, Int) -> Board -> KeyName -> List (Int, Int)
@@ -329,98 +159,6 @@ gripChange list board keyname =
             nextPositions
         else
             list
-
-spinList : List (Int, Int) -> Board -> List (Int, Int)
-spinList list board =
-    let
-        axis = ListEx.getAt 0 list 
-            |> Maybe.withDefault (0, 0)
-        p = ListEx.getAt 1 list
-            |> Maybe.withDefault (0, 0)
-    in
-        if addPosition axis (-1,0) == p then
-            [ axis, addPosition axis (0, 1)]
-        else if addPosition axis (0, 1) == p then
-            [ axis, addPosition axis (1, 0)]
-        else if addPosition axis (1, 0) == p then
-            [ axis, addPosition axis (0, -1)]
-        else
-            [ axis, addPosition axis (-1, 0)]
-
-   
-addPosition : (Int, Int) -> (Int, Int) -> (Int, Int)
-addPosition (x, y) (j, k) = 
-    (x + j, y + k)
- 
-decideMove : (Int, Int) -> Board -> Int
-decideMove (x, y) board =
-    case Array.get y board |> Maybe.map (Array.get x) of
-        Just cell ->
-            case cell of 
-                Just c ->
-                    case c of
-                        Tile number ->
-                            1
-                        Empty ->
-                            if y < 10 &&  x < 8 then
-                                0
-                            else
-                                10
-                Nothing ->
-                    100
-        Nothing ->
-            100
-
-getPositionList : Board -> Cell ->  List (Int, Int)
-getPositionList board c =
-    board
-        |> Array.map Array.toList
-        |> Array.toList
-        |> List.indexedMap (\i -> List.indexedMap (\j -> Tuple.pair ( j, i )))
-        |> List.concat
-        |> List.filterMap
-            (\( position, cell ) ->
-                  if cell == c then
-                      Just position
-                  else
-                      Nothing
-            )
-
- 
-updateBoard : Board -> (Int, Int) -> (Int, Int) -> Board
-updateBoard board oldp p =
-    if oldp == p then
-        board
-    else
-        setBoard p (getPuyo oldp board)  board
-            |> setBoard oldp Empty
-
-getPuyo : (Int, Int) -> Board -> Cell
-getPuyo (x, y) board =
-    let
-        tile = case Array.get y board of
-            Nothing ->
-                Empty
-            Just row ->
-                case Array.get x row of
-                    Nothing ->
-                        Empty
-                    Just cell ->
-                        cell
-    in
-        tile
-
-newPuyo : Board -> Int -> Board
-newPuyo board r =
-    setBoard (2 , 0) (Tile r) board   
-
-setBoard : (Int, Int) -> Cell -> Board -> Board
-setBoard ( x, y ) cell board =
-    Array.get y board
-        |> Maybe.map (\oldRow -> Array.set x cell oldRow)
-        |> Maybe.map (\newRow -> Array.set y newRow board)
-        |> Maybe.withDefault board
-
 
 
 -- VIEW
@@ -449,23 +187,10 @@ viewRow row =
 viewCell : Cell -> Html Msg
 viewCell cell =
     case cell of
-        Tile number ->
-            let
-                t = case number of
-                    1 ->
-                        "1"
-                    2 ->
-                        "2"
-                    3 ->
-                        "3"
-                    4 ->
-                        "4"
-                    _ ->
-                        "?"
-            in
+        Tile puyo ->
             div
                 Styles.cellStyle
-                [ text t
+                [ img [src (getPuyoImg puyo) , width 30, height 30] []
                 ]
         Empty ->
             div
@@ -475,30 +200,11 @@ viewCell cell =
 
 
 -- SUBSCRIPTIONS
-subscriptions : model -> sub msg
 subscriptions model =
-    sub.batch
-        [ time.every 1000 tick
-        , onkeydown (decode.map keymsg keydecoder)
+    Sub.batch
+        [ Time.every 1000 Tick
+        , onKeyDown (Decode.map KeyMsg keyDecoder)
         ]
-
-keyDecoder : Decode.Decoder KeyName
-keyDecoder =
-    Decode.map toKeyName (Decode.field "key" Decode.string)
-
-toKeyName : String -> KeyName
-toKeyName string =
-    case string of
-        "ArrowDown" ->
-            Down
-        "ArrowRight" ->
-            Right
-        "ArrowLeft" ->
-            Left
-        "Space" ->
-            Space
-        _ ->
-            Other
 
 -- MAIN
 main =
