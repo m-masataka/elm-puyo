@@ -17,6 +17,7 @@ import KeyAction exposing (..)
 import Puyo exposing (..)
 import Board exposing (..)
 import BoardUtils exposing (..)
+import Score exposing (..)
 import FeatherIcons
  
 
@@ -27,12 +28,13 @@ type alias Model =
     , gripPositions: List (Int, Int)
     , board: Board
     , status: Status
+    , chainCounter: Int
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model ( Time.millisToPosix 0) 0 [(1,0),(1,1)] initBoard Normal
+    ( Model ( Time.millisToPosix 0) 0 [(1,0),(1,1)] initBoard Normal 0
       , Cmd.none
     )
 
@@ -78,9 +80,8 @@ update msg model =
             let
                 ngp = gripChange model.gripPositions model.board Down
                 removeList = List.map (\n -> getRemoveList n model.board) puyoList
-                             |> List.concat
                 falledBoard = fallDown model.board
-                status = changeStatus model.status model.gripPositions ngp removeList model.board falledBoard
+                status = changeStatus model.status model.gripPositions ngp (List.concat removeList) model.board falledBoard
                 gpl = List.map2 Tuple.pair model.gripPositions ngp
                     |> List.map (\((x, y),(z,o)) ->
                            [(x, y), (z, o)]
@@ -91,15 +92,31 @@ update msg model =
                         Normal ->
                             updateBoardByList gpl model.board
                         Remove ->
-                            removeList
+                            List.concat removeList
                                 |> (\l -> removePuyo l  model.board)
                         Fall ->
                             falledBoard
                         _ ->
                             model.board
 
+                chainCounter = case status of
+                    Remove ->
+                        model.chainCounter + 1
+                    Fall ->
+                        model.chainCounter
+                    _ ->
+                        0
+         
+                score =
+                    calcScore
+                    model.score
+                    (List.length (List.concat removeList) )
+                    (List.filter (\l -> List.length l > 0) removeList |> List.length)
+                    chainCounter
+                    (List.map (\l -> List.length l) removeList)
+
             in
-            ( { model |  board = board, gripPositions = ngp ,status = status}
+            ( { model | score = score, board = board, gripPositions = ngp ,status = status, chainCounter = chainCounter}
             , Random.generate RandPuyo (RandomList.shuffle puyoList)
             )
         RandPuyo puyolist ->
@@ -122,7 +139,7 @@ update msg model =
             , Cmd.none
             )
         Clear ->
-            ( { model | score = 0 , board = initBoard, gripPositions = initPositions, status = Normal}
+            ( { model | score = 0 , board = initBoard, gripPositions = initPositions, status = Normal, chainCounter = 0}
             , Cmd.none
             )
 
@@ -166,8 +183,9 @@ view : Model -> Html Msg
 view model =
    div []
        [ button [ onClick Clear ] [ text "Clear" ]
-       , div [] [ text (String.fromInt model.score) ]
        , div [] [ viewBoard model.board ]
+       , div [] [ text (String.fromInt model.score) ]
+       , div [] [ text (String.fromInt model.chainCounter) ]
        ]
 
 
