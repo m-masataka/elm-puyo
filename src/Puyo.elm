@@ -13,13 +13,13 @@ getPuyoImg : Puyo -> String
 getPuyoImg puyo =
     case puyo of
         Red ->
-            "img/puyo1.gif"
+            "src/img/puyo1.gif"
         Blue ->
-            "img/puyo2.gif"
+            "src/img/puyo2.gif"
         Green ->
-            "img/puyo3.gif"
+            "src/img/puyo3.gif"
         Yellow ->
-            "img/puyo4.gif"
+            "src/img/puyo4.gif"
         _ ->
             "?"
 
