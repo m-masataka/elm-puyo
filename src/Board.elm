@@ -19,13 +19,13 @@ type Cell
 
 initPositions = [(1,0),(1,1)]
 
-rowLength = 8
-culumnLength = 10
+rowLength = 6
+columnLength = 13
 
 initBoard: Board
 initBoard =
     setBoardByList initPositions (Tile Red)
-    <| Array.repeat culumnLength <| Array.repeat rowLength <| Empty
+    <| Array.repeat columnLength <| Array.repeat rowLength <| Empty
 
 setBoardByList : List (Int, Int) -> Cell -> Board -> Board
 setBoardByList list c board =
@@ -218,7 +218,7 @@ decideMove (x, y) board =
                         Tile number ->
                             1
                         Empty ->
-                            if y < culumnLength &&  x < rowLength then
+                            if y < columnLength &&  x < rowLength then
                                 0
                             else
                                 10

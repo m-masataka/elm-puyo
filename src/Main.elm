@@ -1,3 +1,5 @@
+port module Main exposing (main)
+
 import Array exposing (Array)
 import Browser
 import Html exposing (..)
@@ -7,8 +9,8 @@ import Json.Decode as Decode
 import Html.Events exposing (onClick)
 import Time
 import Task
-import Debug
 import List.Extra as ListEx
+import Debug
 import Random
 import Random.List as RandomList
 import Styles
@@ -19,7 +21,7 @@ import Board exposing (..)
 import BoardUtils exposing (..)
 import Score exposing (..)
 import FeatherIcons
- 
+import Json.Encode as Encode 
 
 -- Model
 type alias Model = 
@@ -29,12 +31,13 @@ type alias Model =
     , board: Board
     , status: Status
     , chainCounter: Int
+    , debugmsg: String
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model ( Time.millisToPosix 0) 0 [(1,0),(1,1)] initBoard Normal 0
+    ( Model ( Time.millisToPosix 0) 0 [(1,0),(1,1)] initBoard Normal 0 "non"
       , Cmd.none
     )
 
@@ -43,7 +46,7 @@ type Msg
     = Tick Time.Posix
     | KeyMsg KeyName
     | RandPuyo (List Puyo)
-    | Clear
+    | Restart
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -73,7 +76,7 @@ update msg model =
                 -- board = updateBoardByList sorted model.board
                 board = updateBoardByGripPositions model.gripPositions ngp model.board
             in
-            ( { model | board = board, gripPositions = ngp }
+            ( { model | board = board, gripPositions = ngp}
             , Cmd.none
             )
         Tick newTime ->
@@ -117,15 +120,20 @@ update msg model =
 
             in
             ( { model | score = score, board = board, gripPositions = ngp ,status = status, chainCounter = chainCounter}
-            , Random.generate RandPuyo (RandomList.shuffle puyoList)
+            , Random.generate RandPuyo (RandomList.shuffle (List.append puyoList puyoList) )
             )
         RandPuyo puyolist ->
             let
                 board =
                     case model.status of
                         New -> 
-                            setBoard (ListEx.getAt 0 initPositions |> Maybe.withDefault (1,0))  ( Tile ( ListEx.getAt 0 puyolist |> Maybe.withDefault Red )) model.board
-                            |> setBoard (ListEx.getAt 1 initPositions |> Maybe.withDefault (1,1)) ( Tile ( ListEx.getAt 1 puyolist |> Maybe.withDefault Red ))
+                            setBoard 
+                                (ListEx.getAt 0 initPositions |> Maybe.withDefault (1,0))
+                                ( Tile ( ListEx.getAt 3 puyolist |> Maybe.withDefault Red ))
+                                model.board
+                            |> setBoard 
+                                (ListEx.getAt 1 initPositions |> Maybe.withDefault (1,1))
+                                ( Tile ( ListEx.getAt 4 puyolist |> Maybe.withDefault Red ))
                         _ ->
                             model.board
                 gps = 
@@ -138,7 +146,7 @@ update msg model =
             ( { model | board = board, gripPositions = gps}
             , Cmd.none
             )
-        Clear ->
+        Restart ->
             ( { model | score = 0 , board = initBoard, gripPositions = initPositions, status = Normal, chainCounter = 0}
             , Cmd.none
             )
@@ -164,7 +172,22 @@ gripChange list board keyname =
                 List.map (\(x, y) -> (x - 1, y) ) list
             Right ->
                 List.map (\(x, y) -> (x + 1, y) ) list
-            _ ->
+            SpinLeft ->
+                spinList list board
+            FallDown ->
+                List.range 1 (columnLength - 1)
+                |> List.map (\n -> 
+                    List.map (\(x, y) -> (x, y + n)) list
+                    |> List.map (\np ->
+                        setBoardByList list Empty board
+                        |> decideMove np
+                     )
+                     |> List.sum
+                   )
+                |> List.filter (\n -> n == 0)
+                |> List.length
+                |> (\n -> List.map (\(x, y) -> (x, y + n) ) list)
+            Other ->
                 spinList list board
         f = List.map (\np -> 
                 setBoardByList list Empty board
@@ -182,37 +205,38 @@ gripChange list board keyname =
 view : Model -> Html Msg
 view model =
    div []
-       [ button [ onClick Clear ] [ text "Clear" ]
-       , div [] [ viewBoard model.board ]
-       , div [] [ text (String.fromInt model.score) ]
-       , div [] [ text (String.fromInt model.chainCounter) ]
+       [ button 
+           [ class "restart-button"
+           ,onClick Restart
+           ] 
+           [ text "Restart" ]
+       , div [class "game-container"] [ viewBoard model.board ]
+       , div [] [ text ("Score: " ++ (String.fromInt model.score)) ]
+       , div [] [ text ("Chain: " ++ (String.fromInt model.chainCounter)) ]
+       , div [] [ text ("Debug: " ++ model.debugmsg) ]
        ]
 
 
 viewBoard : Board -> Html Msg
 viewBoard board =
-    div
-        Styles.boardStyle
-    <|
+    div [class "grid-container"] <|
         Array.toList (Array.map viewRow board)
 
 
 viewRow : Row -> Html Msg
 viewRow row =
-    div [] <|
+    div [class "grip-row"] <|
         Array.toList (Array.map viewCell row)
 
 viewCell : Cell -> Html Msg
 viewCell cell =
     case cell of
         Tile puyo ->
-            div
-                Styles.cellStyle
-                [ img [src (getPuyoImg puyo) , width 30, height 30] []
+            div [class "grid-cell"]
+                [ img [src (getPuyoImg puyo)] []
                 ]
         Empty ->
-            div
-                Styles.cellStyle
+            div [class "grid-cell"]
                 [ text ""
                 ]
 
@@ -222,7 +246,16 @@ subscriptions model =
     Sub.batch
         [ Time.every 1000 Tick
         , onKeyDown (Decode.map KeyMsg keyDecoder)
+        , swipeDirectionArrow handleSwipe
         ]
+
+handleSwipe : Encode.Value -> Msg
+handleSwipe value =
+    case Decode.decodeValue swipeDecoder value of
+        Ok keymanager ->
+            KeyMsg (toKeyName keymanager.key)
+        Err _ ->
+            Restart
 
 -- MAIN
 main =
@@ -233,3 +266,5 @@ main =
         , view = view
         }
 
+-- port
+port swipeDirectionArrow : (Encode.Value -> msg) -> Sub msg

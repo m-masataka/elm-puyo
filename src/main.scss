@@ -1,0 +1,148 @@
+@import "style/helpers.scss";
+// @import "style/fonts/clear-sans.css";
+
+$field-width: 60vw;
+$field-height: 130vw;
+$grid-spacing: 0vw;
+$grid-row-cells: 6;
+$tile-size: ($field-width - $grid-spacing * ($grid-row-cells + 1)) /
+  $grid-row-cells;
+$tile-border-radius: 0px;
+
+$mobile-threshold: $field-width + 10vw;
+
+$text-color: #776e65;
+$bright-text-color: #f9f6f2;
+
+$tile-color: saturate(#eee4da, 10%);
+$tile-gold-color: saturate(#edc22e, 5%);
+$tile-gold-glow-color: lighten($tile-gold-color, 15%);
+
+$game-container-margin-top: 40px;
+$game-container-background: #bbada0;
+
+$transition-speed: 100ms;
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+
+  background: #faf8ef;
+  color: $text-color;
+  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 40px;
+}
+
+body {
+  margin: 80px 0;
+}
+
+.heading {
+  @include clearfix;
+  width: $field-width;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  &:focus {
+    outline: 0;
+  }
+}
+
+a,
+button {
+  color: $text-color;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+strong {
+  &.important {
+    text-transform: uppercase;
+  }
+}
+
+hr {
+  border: none;
+  border-bottom: 1px solid lighten($text-color, 40%);
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.container {
+  width: $field-width;
+  margin: 0 auto;
+}
+
+img {
+  display: inline-block;
+  margin: auto;
+  width: $tile-size;
+}
+
+@mixin button {
+  display: inline-block;
+  background: darken($game-container-background, 20%);
+  border-radius: 1vw;
+  padding: 0 2vw;
+  text-decoration: none;
+  color: $bright-text-color;
+  width: 20vw;
+  height: 20vw;
+  line-height: 10vh;
+}
+
+.restart-button {
+  @include button;
+  display: block;
+  text-align: center;
+  float: right;
+}
+
+.game-container {
+  margin-top: $game-container-margin-top;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  padding: $grid-spacing;
+  background: $game-container-background;
+  border-radius: $tile-border-radius * 2;
+  width: $field-width;
+  height: $field-height;
+}
+  
+.grid-container {
+  position: absolute;
+  z-index: 1;
+}
+
+.grid-row {
+  margin-bottom: $grid-spacing;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &:after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+}
+
+.grid-cell {
+  width: $tile-size;
+  height: $tile-size;
+  margin-right: $grid-spacing;
+  float: left;
+
+  border-radius: $tile-border-radius;
+
+  background: rgba($tile-color, 0.35);
+
+  &:last-child {
+    margin-right: 0;
+  }
+}

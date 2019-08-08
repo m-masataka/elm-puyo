@@ -6,8 +6,29 @@ type KeyName
     = Down
     | Right
     | Left
-    | Space
+    | SpinLeft
+    | FallDown
     | Other
+
+type alias KeyManager = 
+    { key : String
+    , movex : Float
+    , movey : Float
+    }
+
+emptyKeyManager : KeyManager
+emptyKeyManager =
+    { key = ""
+    , movex = 0
+    , movey = 0
+    }
+
+swipeDecoder : Decode.Decoder KeyManager
+swipeDecoder =
+    Decode.map3 KeyManager
+        (Decode.field "key" Decode.string)
+        (Decode.field "movex" Decode.float)
+        (Decode.field "movey" Decode.float)
 
 keyDecoder : Decode.Decoder KeyName
 keyDecoder =
@@ -22,9 +43,11 @@ toKeyName string =
             Right
         "ArrowLeft" ->
             Left
-        "Space" ->
-            Space
+        "Tap" ->
+            SpinLeft
+        "SwipeDown" ->
+            FallDown
         _ ->
-            Other
+            SpinLeft
 
 
