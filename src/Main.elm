@@ -13,7 +13,6 @@ import List.Extra as ListEx
 import Debug
 import Random
 import Random.List as RandomList
-import Styles
 import Status exposing (..)
 import KeyAction exposing (..)
 import Puyo exposing (..)
