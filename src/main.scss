@@ -1,15 +1,16 @@
 @import "style/helpers.scss";
 // @import "style/fonts/clear-sans.css";
 
-$field-width: 60vw;
-$field-height: 130vw;
-$grid-spacing: 0vw;
+$grid-spacing: 0vh;
 $grid-row-cells: 6;
-$tile-size: ($field-width - $grid-spacing * ($grid-row-cells + 1)) /
-  $grid-row-cells;
+$grid-column-cells: 13;
+$field-height: 70vh;
+$field-width: $field-height * $grid-row-cells / $grid-column-cells;
+$tile-size: ($field-height - $grid-spacing * ($grid-row-cells + 1)) /
+  $grid-column-cells;
 $tile-border-radius: 0px;
 
-$mobile-threshold: $field-width + 10vw;
+$mobile-threshold: $field-width + 10vh;
 
 $text-color: #776e65;
 $bright-text-color: #f9f6f2;
@@ -18,7 +19,7 @@ $tile-color: saturate(#eee4da, 10%);
 $tile-gold-color: saturate(#edc22e, 5%);
 $tile-gold-glow-color: lighten($tile-gold-color, 15%);
 
-$game-container-margin-top: 40px;
+$game-container-margin-top: 10vh;
 $game-container-background: #bbada0;
 
 $transition-speed: 100ms;
@@ -31,11 +32,11 @@ body {
   background: #faf8ef;
   color: $text-color;
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
-  font-size: 40px;
+  font-size: 2vh;
 }
 
 body {
-  margin: 80px 0;
+  margin: 10vh 0;
 }
 
 .heading {
