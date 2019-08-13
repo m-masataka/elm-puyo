@@ -3,7 +3,7 @@ module Board exposing (..)
 import Array exposing (Array)
 import List.Extra as ListEx
 import Puyo exposing (..)
-import BoardUtils exposing (..)
+import KeyAction exposing (..)
 
 type alias Board =
     Array Row
@@ -227,4 +227,23 @@ decideMove (x, y) board =
         Nothing ->
             100
 
+compareDownList : List (Int, Int) -> List (Int, Int) -> Order
+compareDownList la lb =
+    case compare (getComparableValue la Down) (getComparableValue lb Down) of
+        LT -> GT
+        EQ -> EQ
+        GT -> LT
 
+getComparableValue : List (Int, Int)  -> KeyName -> Int
+getComparableValue list  keyname =
+    case ListEx.getAt 0 list of
+        Just (x, y) ->
+            case keyname of
+                Right ->
+                    x
+                Left ->
+                    -x
+                _ ->
+                    y
+        Nothing ->
+            -1

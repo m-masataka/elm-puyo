@@ -17,7 +17,6 @@ import Status exposing (..)
 import KeyAction exposing (..)
 import Puyo exposing (..)
 import Board exposing (..)
-import BoardUtils exposing (..)
 import Score exposing (..)
 import FeatherIcons
 import Json.Encode as Encode 
@@ -63,16 +62,6 @@ update msg model =
                     |> List.map (\((x, y),(z,o)) ->
                            [(x, y), (z, o)]
                         )
-                sorted = case keyname of
-                    Right ->
-                        List.sortWith compareRightList gpl
-                    Left ->
-                        List.sortWith compareLeftList gpl
-                    Down ->
-                        List.sortWith compareDownList gpl
-                    _ ->
-                        gpl
-                -- board = updateBoardByList sorted model.board
                 board = updateBoardByGripPositions model.gripPositions ngp model.board
             in
             ( { model | board = board, gripPositions = ngp}
