@@ -73,10 +73,16 @@ update msg model =
             )
         Tick newTime ->
             let
-                ngp = gripChange model.gripPositions model.board Down
+                ngp = 
+                    case model.status of
+                        End ->
+                            model.gripPositions
+                        _ -> 
+                            gripChange model.gripPositions model.board Down
                 removeList = List.map (\n -> getRemoveList n model.board) puyoList
                 falledBoard = fallDown model.board
-                status = changeStatus model.status model.gripPositions ngp (List.concat removeList) model.board falledBoard
+                status =
+                    changeStatus model.status model.gripPositions ngp (List.concat removeList) model.board falledBoard
                 gpl = List.map2 Tuple.pair model.gripPositions ngp
                     |> List.map (\((x, y),(z,o)) ->
                            [(x, y), (z, o)]
@@ -215,6 +221,7 @@ view model =
        , div [] [ text ("Score: " ++ (String.fromInt model.score)) ]
        , div [] [ text ("Chain: " ++ (String.fromInt model.chainCounter)) ]
        , div [] [ text ("Debug: " ++ model.debugmsg) ]
+       , viewEndMessage model.status model.score
        ]
 
 viewNextPuyo : List Puyo -> Html Msg
@@ -256,6 +263,34 @@ viewCell cell =
                 [ text ""
                 ]
 
+viewEndMessage : Status -> Int -> Html Msg
+viewEndMessage status score =
+    div [ class ("game-message" ++ getGameStatus status)]
+        [ p []
+            [ text "Game Over" ]
+        , a []
+            [ text ("Score: " ++ (String.fromInt score)) ]
+        , div [ class "lower" ]
+            [ button
+                [ class "retry-button"
+                , onClick Restart
+                ]
+                [ text "Try again" ]
+            , button
+                [ class "keep-playing-button"
+                , onClick Restart
+                ]
+                [ text "Restart" ]
+            ]
+        ]
+
+getGameStatus : Status -> String
+getGameStatus status =
+    case status of
+        End ->
+            " game-over"
+        _ ->
+            ""
 
 -- SUBSCRIPTIONS
 subscriptions model =

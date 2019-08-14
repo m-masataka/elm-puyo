@@ -112,7 +112,7 @@ img {
   text-decoration: none;
   border-radius: 1vw;
   color: $bright-text-color;
-  width: 10vw;
+  width: 15vw;
   height: 30vh;
   display: block;
   text-align: center;
@@ -163,5 +163,65 @@ img {
 
   &:last-child {
     margin-right: 0;
+  }
+}
+
+.game-message {
+  display: none;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba($tile-color, 0.5);
+  z-index: 100;
+
+  text-align: center;
+  a {
+    font-size: 3vh;
+    font-weight: bold;
+    margin-top: 30vh;
+  }
+
+  p {
+    font-size: 7vh;
+    font-weight: bold;
+    height: 7vh;
+    line-height: 7vh;
+    margin-top: 20vh;
+  }
+
+  .lower {
+    display: block;
+    margin-top: 30vh;
+  }
+
+  button {
+    @include button;
+    margin-left: 2vh;
+
+    width: 30vw;
+    height: 10vh;
+    &.keep-playing-button {
+      display: none;
+    }
+  }
+
+  @include animation(fade-in 400ms ease $transition-speed * 6);
+  @include animation-fill-mode(both);
+
+  &.game-won {
+    background: rgba($tile-gold-color, 0.5);
+    color: $bright-text-color;
+
+    button.keep-playing-button {
+      display: inline-block;
+    }
+  }
+
+  &.game-won,
+  &.game-over {
+    display: block;
   }
 }

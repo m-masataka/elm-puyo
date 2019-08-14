@@ -9,6 +9,7 @@ type Status
     | Remove
     | Fall
     | New
+    | End
 
 changeStatus: Status -> List (Int, Int) -> List (Int, Int) -> List (Int, Int) -> Board -> Board -> Status
 changeStatus status cgp ngp removeList board falledBoard = 
@@ -18,8 +19,10 @@ changeStatus status cgp ngp removeList board falledBoard =
                 if board == falledBoard then
                     if List.length removeList > 0 then
                         Remove
-                    else
+                    else if getPuyo (1, 0) board == Empty then
                         New
+                    else
+                        End
                 else
                     Fall
             else
@@ -28,14 +31,21 @@ changeStatus status cgp ngp removeList board falledBoard =
             if List.length removeList > 0 then
                 Remove
             else if board == falledBoard then
-                New
+                if getPuyo (1, 0) board == Empty then
+                    New
+                else
+                    End
             else
                 Fall
         Fall ->
             if List.length removeList > 0 then
                 Remove
             else
-                New
+                if getPuyo (1, 0) board == Empty then
+                    New
+                else
+                    End
+        End ->
+            End
         _ ->
             Normal
- 
