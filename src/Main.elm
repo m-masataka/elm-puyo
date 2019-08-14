@@ -29,13 +29,17 @@ type alias Model =
     , board: Board
     , status: Status
     , chainCounter: Int
+    , nextList: List Puyo
     , debugmsg: String
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model ( Time.millisToPosix 0) 0 [(1,0),(1,1)] initBoard Normal 0 "non"
+    let
+        nextPuyo = [Red, Blue, Green, Red]
+    in
+    ( Model ( Time.millisToPosix 0) 0 [(1,0),(1,1)] initBoard Normal 0 nextPuyo "non"
       , Cmd.none
     )
 
@@ -112,16 +116,24 @@ update msg model =
             )
         RandPuyo puyolist ->
             let
+                nextList = 
+                    case model.status of
+                        New ->
+                            List.take 2 puyolist
+                            |> List.append model.nextList
+                            |> List.drop 2
+                        _ ->
+                            model.nextList
                 board =
                     case model.status of
                         New -> 
                             setBoard 
                                 (ListEx.getAt 0 initPositions |> Maybe.withDefault (1,0))
-                                ( Tile ( ListEx.getAt 3 puyolist |> Maybe.withDefault Red ))
+                                ( Tile ( ListEx.getAt 0 model.nextList |> Maybe.withDefault Red ))
                                 model.board
                             |> setBoard 
                                 (ListEx.getAt 1 initPositions |> Maybe.withDefault (1,1))
-                                ( Tile ( ListEx.getAt 4 puyolist |> Maybe.withDefault Red ))
+                                ( Tile ( ListEx.getAt 1 model.nextList |> Maybe.withDefault Red ))
                         _ ->
                             model.board
                 gps = 
@@ -131,7 +143,7 @@ update msg model =
                         _ ->
                             model.gripPositions
             in
-            ( { model | board = board, gripPositions = gps}
+            ( { model | board = board, gripPositions = gps, nextList = nextList }
             , Cmd.none
             )
         Restart ->
@@ -198,18 +210,34 @@ view model =
            ,onClick Restart
            ] 
            [ text "Restart" ]
+       , div [class "next-puyo-container"] [ viewNextPuyo model.nextList ]
        , div [class "game-container"] [ viewBoard model.board ]
        , div [] [ text ("Score: " ++ (String.fromInt model.score)) ]
        , div [] [ text ("Chain: " ++ (String.fromInt model.chainCounter)) ]
        , div [] [ text ("Debug: " ++ model.debugmsg) ]
        ]
 
+viewNextPuyo : List Puyo -> Html Msg
+viewNextPuyo list =
+    let
+        puyo11 = ListEx.getAt 0 list |> Maybe.withDefault Red
+        puyo12 = ListEx.getAt 1 list |> Maybe.withDefault Red
+        puyo21 = ListEx.getAt 2 list |> Maybe.withDefault Red
+        puyo22 = ListEx.getAt 3 list |> Maybe.withDefault Red
+    in
+    div []
+        [ br [] []
+        , div [] [ img [src (getPuyoImg puyo11)] [] ]
+        , div [] [ img [src (getPuyoImg puyo12)] [] ]
+        , br [] []
+        , div [] [ img [src (getPuyoImg puyo21)] [] ]
+        , div [] [ img [src (getPuyoImg puyo22)] [] ]
+        ]
 
 viewBoard : Board -> Html Msg
 viewBoard board =
     div [class "grid-container"] <|
         Array.toList (Array.map viewRow board)
-
 
 viewRow : Row -> Html Msg
 viewRow row =
