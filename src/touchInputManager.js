@@ -62,7 +62,7 @@ TouchInputManager.prototype.listen = function () {
 
     var dy = touchMoveClientY - touchStartClientY;
     var absDy = Math.abs(dy);
-    if (diffTime >= 400) {
+    if (diffTime >= 100) {
       if (Math.max(absDx, absDy) > 30) {
         var direction = absDx > absDy ?
           (dx > 0 ? "ArrowRight" : "ArrowLeft") :
@@ -97,7 +97,7 @@ TouchInputManager.prototype.listen = function () {
 
     var dy = touchEndClientY - touchStartClientY;
     var absDy = Math.abs(dy);
-    if (diffTime < 400) {
+    if (diffTime < 100) {
       if (Math.max(absDx, absDy) > 10) {
         var direction = absDx > absDy ?
           (dx > 0 ? "ArrowRight" : "ArrowLeft") :
