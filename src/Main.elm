@@ -211,17 +211,44 @@ gripChange list board keyname =
 view : Model -> Html Msg
 view model =
    div []
-       [ button 
-           [ class "restart-button"
-           ,onClick Restart
-           ] 
-           [ text "Restart" ]
-       , div [class "next-puyo-container"] [ viewNextPuyo model.nextList ]
-       , div [class "game-container"] [ viewBoard model.board ]
-       , div [] [ text ("Score: " ++ (String.fromInt model.score)) ]
-       , div [] [ text ("Chain: " ++ (String.fromInt model.chainCounter)) ]
+       [ div [ class "heading" ]
+           [ div [ class "scores-container" ]
+               [ div [ class "score-container" ]
+                   [ text (String.fromInt model.score) ]
+               , div [ class "chain-container" ]
+                   [ text (String.fromInt model.chainCounter) ]
+               ]
+           ]
+       , div [ class "above-game" ]
+           [ div [ class "game-intro" ]
+               [ p [] [ text "Play " 
+                      , strong []
+                          [ text "Puyo Puyo!" ]
+                      ]
+               , p [] [ text "Check the "
+                      , a [ href "https://en.wikipedia.org/wiki/Puyo_Puyo#Gameplay", target "_blank" ]
+                          [ text "PuyoPuyo Rule" ]
+                      , text " and "
+                      , a [ href "#", onClick Restart ]
+                          [ text "Operations Guid" ]
+                      ]
+               ]
+           , button
+               [ class "restart-button"
+               , onClick Restart
+               ]
+               [ text "Restart" ]
+           ]
+       , viewGameContainer model.nextList model.board
        , div [] [ text ("Debug: " ++ model.debugmsg) ]
        , viewEndMessage model.status model.score
+       ]
+
+viewGameContainer : List Puyo -> Board -> Html Msg
+viewGameContainer nextList board =
+   div []
+       [ div [class "next-puyo-container"] [ viewNextPuyo nextList ]
+       , div [class "game-container"] [ viewBoard board ]
        ]
 
 viewNextPuyo : List Puyo -> Html Msg

@@ -4,7 +4,7 @@
 $grid-spacing: 0vh;
 $grid-row-cells: 6;
 $grid-column-cells: 13;
-$field-height: 70vh;
+$field-height: 60vh;
 $field-width: $field-height * $grid-row-cells / $grid-column-cells;
 $tile-size: ($field-height - $grid-spacing * ($grid-row-cells + 1)) /
   $grid-column-cells;
@@ -19,7 +19,7 @@ $tile-color: saturate(#eee4da, 10%);
 $tile-gold-color: saturate(#edc22e, 5%);
 $tile-gold-glow-color: lighten($tile-gold-color, 15%);
 
-$game-container-margin-top: 10vh;
+$game-container-margin-top: 2px;
 $game-container-background: #bbada0;
 
 $transition-speed: 100ms;
@@ -33,15 +33,6 @@ body {
   color: $text-color;
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
   font-size: 2vh;
-}
-
-body {
-  margin: 10vh 0;
-}
-
-.heading {
-  @include clearfix;
-  width: $field-width;
 }
 
 button {
@@ -60,6 +51,16 @@ button {
   cursor: pointer;
 }
 
+p {
+  margin-top: 0;
+  margin-bottom: 10px;
+  line-height: 1.65;
+}
+
+body {
+  margin: 0 0;
+}
+
 strong {
   &.important {
     text-transform: uppercase;
@@ -69,7 +70,7 @@ strong {
 hr {
   border: none;
   border-bottom: 1px solid lighten($text-color, 40%);
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 30px;
 }
 
@@ -88,12 +89,99 @@ img {
   display: inline-block;
   background: darken($game-container-background, 20%);
   border-radius: 1vw;
-  padding: 0 2vw;
+  padding: 0 20px;
   text-decoration: none;
   color: $bright-text-color;
-  width: 15vw;
+}
+
+.heading {
+  @include clearfix;
+  width: 100vw;
   height: 15vw;
-  line-height: 10vh;
+}
+
+.scores-container {
+  float: right;
+  text-align: right;
+  div:first-child {
+    margin-right: 5px;
+  }
+}
+
+.score-container,
+.chain-container {
+  margin-top: 0;
+  padding: 15px 10px;
+  min-width: 20hw;
+  font-size: 20hw;
+}
+
+.score-container,
+.chain-container {
+  $height: 5vh;
+
+  position: relative;
+  display: inline-block;
+  background: $game-container-background;
+  padding: 15px 20px;
+  font-size: $height/2;
+  height: $height;
+  width: 20vw;
+  line-height: $height;
+  font-weight: bold;
+  border-radius: 3px;
+  color: white;
+  margin-top: 8px;
+  text-align: center;
+
+  &:after {
+    position: absolute;
+    width: 100%;
+    top: 10px;
+    left: 0;
+    text-transform: uppercase;
+    font-size: $height/3;
+    line-height: $height/3;
+    text-align: center;
+    color: $tile-color;
+  }
+
+  .score-addition {
+    position: absolute;
+    right: 30px;
+    color: red;
+    font-size: $height;
+    line-height: $height;
+    font-weight: bold;
+    color: rgba($text-color, 0.9);
+    z-index: 100;
+    @include animation(move-up 600ms ease-in);
+    @include animation-fill-mode(both);
+  }
+}
+
+.score-container:after {
+  content: "Score";
+}
+
+.chain-container:after {
+  content: "Chain";
+}
+
+.above-game {
+  @include clearfix;
+  width: 100vw;
+  height: 23vw;
+}
+
+.game-intro {
+  float: left;
+  width: 60vw;
+  height: 80%;
+  margin-bottom: 0;
+  margin-left: 3vw;
+  margin-right: 3vw;
+  word-wrap: break-word;
 }
 
 .restart-button {
@@ -101,6 +189,8 @@ img {
   display: block;
   text-align: center;
   float: right;
+  height: 80%;
+  margin-bottom: 1vw;
   margin-left: 3vw;
   margin-right: 3vw;
 }
