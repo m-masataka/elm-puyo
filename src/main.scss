@@ -1,6 +1,7 @@
 @import "style/helpers.scss";
 // @import "style/fonts/clear-sans.css";
 
+$min-width: 425px;
 $grid-spacing: 0vh;
 $grid-row-cells: 6;
 $grid-column-cells: 12;
@@ -87,7 +88,7 @@ img {
 
 @mixin button {
   display: inline-block; background: darken($game-container-background, 20%);
-  border-radius: 1vw;
+  border-radius: 1px;
   padding: 0 20px;
   text-decoration: none;
   color: $bright-text-color;
@@ -95,8 +96,9 @@ img {
 
 .heading {
   @include clearfix;
+  min-width: $min-width;
   width: 100vw;
-  height: 15vw;
+  height: 15vh;
 }
 
 h1.title {
@@ -180,7 +182,8 @@ h1.title {
 .above-game {
   @include clearfix;
   width: 100vw;
-  height: 25vw;
+  min-width: $min-width;
+  height: 15vh;
   margin-bottom: 1vh;
 }
 
@@ -207,6 +210,10 @@ h1.title {
   margin-right: 3vw;
 }
 
+.game-board {
+  min-width: $min-width;
+}
+
 .next-puyo-container {
   display: inline-block;
   background: darken($game-container-background, 10%);
@@ -215,6 +222,7 @@ h1.title {
   border-radius: 1vw;
   color: $bright-text-color;
   width: 10vw;
+  min-width: $min-width/10;
   height: 30vh;
   display: block;
   text-align: center;
@@ -224,6 +232,7 @@ h1.title {
 }
 
 .game-container {
+  min-width: $min-width/10*5;
   margin-top: $game-container-margin-top;
   margin-left: auto;
   margin-right: auto;

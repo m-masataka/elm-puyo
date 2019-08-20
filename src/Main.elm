@@ -259,7 +259,7 @@ view model =
 
 viewGameContainer : List Puyo -> Board -> Html Msg
 viewGameContainer nextList board =
-   div []
+   div [class "game-board" ]
        [ div [class "next-puyo-container"] [ viewNextPuyo nextList ]
        , div [class "game-container"] [ viewBoard board ]
        ]
