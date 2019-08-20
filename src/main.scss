@@ -3,7 +3,7 @@
 
 $grid-spacing: 0vh;
 $grid-row-cells: 6;
-$grid-column-cells: 13;
+$grid-column-cells: 12;
 $field-height: 60vh;
 $field-width: $field-height * $grid-row-cells / $grid-column-cells;
 $tile-size: ($field-height - $grid-spacing * ($grid-row-cells + 1)) /

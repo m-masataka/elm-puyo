@@ -283,7 +283,7 @@ viewNextPuyo list =
 
 viewBoard : Board -> Html Msg
 viewBoard board =
-    div [class "grid-container"] <|
+    div [class "grid-container"] <| List.drop 1 <|
         Array.toList (Array.map viewRow board)
 
 viewRow : Row -> Html Msg
