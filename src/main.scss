@@ -99,6 +99,18 @@ img {
   height: 15vw;
 }
 
+h1.title {
+  font-size: 5vh;
+  font-weight: bold;
+  margin: 2vh auto;
+  text-align: center;
+  width: 50%;
+  height: 70%;
+  display: block;
+  line-height: normal;
+  float: left;
+}
+
 .scores-container {
   float: right;
   text-align: right;
@@ -111,13 +123,11 @@ img {
 .chain-container {
   margin-top: 0;
   padding: 15px 10px;
-  min-width: 20hw;
-  font-size: 20hw;
 }
 
 .score-container,
 .chain-container {
-  $height: 5vh;
+  $height: 4vh;
 
   position: relative;
   display: inline-block;
@@ -125,7 +135,7 @@ img {
   padding: 15px 20px;
   font-size: $height/2;
   height: $height;
-  width: 20vw;
+  width: 15vw;
   line-height: $height;
   font-weight: bold;
   border-radius: 3px;
@@ -188,8 +198,10 @@ img {
   display: block;
   text-align: center;
   float: right;
-  height: 80%;
-  margin-bottom: 1vw;
+  height: 50%;
+  width: 25%;
+  margin-top: 1vh;
+  margin-bottom: 1vh;
   margin-left: 3vw;
   margin-right: 3vw;
 }

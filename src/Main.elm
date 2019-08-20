@@ -223,7 +223,9 @@ view : Model -> Html Msg
 view model =
    div []
        [ div [ class "heading" ]
-           [ div [ class "scores-container" ]
+           [ h1 [ class "title" ]
+               [ text "Elm Puyo" ]
+           , div [ class "scores-container" ]
                [ div [ class "score-container" ]
                    [ text (String.fromInt model.score) ]
                , div [ class "chain-container" ]
@@ -251,7 +253,6 @@ view model =
                [ text "Restart" ]
            ]
        , viewGameContainer model.nextList model.board
-       , div [] [ text ("Debug: " ++ model.debugmsg) ]
        , viewEndMessage model.status model.score
        , viewExplanation model.status
        ]
