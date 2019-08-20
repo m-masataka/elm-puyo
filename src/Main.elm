@@ -49,6 +49,8 @@ type Msg
     | KeyMsg KeyName
     | RandPuyo (List Puyo)
     | Restart
+    | ShowGuid
+    | BackToGame
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -75,6 +77,8 @@ update msg model =
             let
                 ngp = 
                     case model.status of
+                        Guid ->
+                            model.gripPositions
                         End ->
                             model.gripPositions
                         _ -> 
@@ -156,7 +160,14 @@ update msg model =
             ( { model | score = 0 , board = initBoard, gripPositions = initPositions, status = Normal, chainCounter = 0}
             , Cmd.none
             )
-
+        ShowGuid ->
+            ( { model | status = Guid }
+            , Cmd.none
+            )
+        BackToGame ->
+            ( { model | status = Normal }
+            , Cmd.none
+            )
 
 removePuyo : List (Int, Int) -> Board -> Board
 removePuyo list board =
@@ -229,7 +240,7 @@ view model =
                       , a [ href "https://en.wikipedia.org/wiki/Puyo_Puyo#Gameplay", target "_blank" ]
                           [ text "PuyoPuyo Rule" ]
                       , text " and "
-                      , a [ href "#", onClick Restart ]
+                      , a [ href "#", onClick ShowGuid ]
                           [ text "Operations Guid" ]
                       ]
                ]
@@ -242,6 +253,7 @@ view model =
        , viewGameContainer model.nextList model.board
        , div [] [ text ("Debug: " ++ model.debugmsg) ]
        , viewEndMessage model.status model.score
+       , viewExplanation model.status
        ]
 
 viewGameContainer : List Puyo -> Board -> Html Msg
@@ -290,6 +302,34 @@ viewCell cell =
                 [ text ""
                 ]
 
+viewExplanation : Status -> Html Msg
+viewExplanation status =
+    div [ class ("game-explanation" ++ getGameStatus status) ]
+        [ p []
+            [ strong []
+                [ text "HOW TO PLAY"]
+            , hr [] []
+            , text "Use your arrow keys or swipe and tap on a screen to move Puyo."
+            , br [] []
+            , br [] []
+            , i [class "fas fa-arrow-circle-left"] []
+            , i [class "fas fa-arrow-circle-right"] []
+            , i [class "fas fa-arrow-circle-down"] []
+            , text " : Move Puyo"
+            , br [] []
+            , br [] []
+            , i [class "fas fa-arrow-circle-up"] []
+            , text " or Tap  : Spin Puyo "
+            ]
+        , div [ class "lower" ]
+            [ button
+                [ class "back-button"
+                , onClick BackToGame
+                ]
+                [ text "Back To Game" ]
+            ]
+        ]
+
 viewEndMessage : Status -> Int -> Html Msg
 viewEndMessage status score =
     div [ class ("game-message" ++ getGameStatus status)]
@@ -303,11 +343,6 @@ viewEndMessage status score =
                 , onClick Restart
                 ]
                 [ text "Try again" ]
-            , button
-                [ class "keep-playing-button"
-                , onClick Restart
-                ]
-                [ text "Restart" ]
             ]
         ]
 
@@ -316,6 +351,8 @@ getGameStatus status =
     case status of
         End ->
             " game-over"
+        Guid ->
+            " game-exp"
         _ ->
             ""
 

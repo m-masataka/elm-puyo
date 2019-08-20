@@ -10,6 +10,7 @@ type Status
     | Fall
     | New
     | End
+    | Guid
 
 changeStatus: Status -> List (Int, Int) -> List (Int, Int) -> List (Int, Int) -> Board -> Board -> Status
 changeStatus status cgp ngp removeList board falledBoard = 
@@ -47,5 +48,7 @@ changeStatus status cgp ngp removeList board falledBoard =
                     End
         End ->
             End
+        Guid ->
+            Guid
         _ ->
             Normal

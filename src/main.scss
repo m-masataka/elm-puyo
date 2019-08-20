@@ -86,8 +86,7 @@ img {
 }
 
 @mixin button {
-  display: inline-block;
-  background: darken($game-container-background, 20%);
+  display: inline-block; background: darken($game-container-background, 20%);
   border-radius: 1vw;
   padding: 0 20px;
   text-decoration: none;
@@ -256,7 +255,7 @@ img {
   }
 }
 
-.game-message {
+@mixin message {
   display: none;
 
   position: absolute;
@@ -264,8 +263,43 @@ img {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba($tile-color, 0.5);
   z-index: 100;
+}
+
+.game-explanation {
+  @include message;
+  background: rgba($tile-color, 0.9);
+  p {
+    font-size: 3vh;
+    height: 3vh;
+    line-height: 3vh;
+    margin-top: 20vh;
+    margin-left: 10vw;
+    margin-right: 10vw;
+  }
+  text-align: center;
+
+  button {
+    @include button;
+    margin-left: 2vh;
+
+    width: 30vw;
+    height: 10vh;
+  }
+
+  .lower {
+    display: block;
+    margin-top: 30vh;
+  }
+
+  &.game-exp {
+    display: block;
+  }
+}
+
+.game-message {
+  @include message;
+  background: rgba($tile-color, 0.5);
 
   text-align: center;
   a {
