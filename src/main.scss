@@ -1,17 +1,27 @@
 @import "style/helpers.scss";
 // @import "style/fonts/clear-sans.css";
 
-$min-width: 425px;
-$grid-spacing: 0vh;
+$whole-container-width: 340px;
+$whole-container-height: 640px;
+
+$heading-width: $whole-container-width;
+$heading-height: $whole-container-height/6;
+
+$above-game-width: $whole-container-width;
+$above-game-height: $whole-container-height/6;
+
+$game-board-width: $whole-container-width;
+$game-board-height: $whole-container-height/6*3;
+
+$grid-spacing: 0px;
 $grid-row-cells: 6;
 $grid-column-cells: 12;
-$field-height: 60vh;
+$field-height: $game-board-height;
 $field-width: $field-height * $grid-row-cells / $grid-column-cells;
 $tile-size: ($field-height - $grid-spacing * ($grid-row-cells + 1)) /
   $grid-column-cells;
 $tile-border-radius: 0px;
 
-$mobile-threshold: $field-width + 10vh;
 
 $text-color: #776e65;
 $bright-text-color: #f9f6f2;
@@ -33,7 +43,7 @@ body {
   background: #faf8ef;
   color: $text-color;
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
-  font-size: 2vh;
+  font-size: 14px;
 }
 
 button {
@@ -75,8 +85,8 @@ hr {
   margin-bottom: 30px;
 }
 
-.container {
-  width: $field-width;
+.whole-container {
+  width: $whole-container-width;
   margin: 0 auto;
 }
 
@@ -96,15 +106,13 @@ img {
 
 .heading {
   @include clearfix;
-  min-width: $min-width;
-  width: 100vw;
-  height: 15vh;
+  width: $heading-width;
+  height: $heading-height;
 }
 
 h1.title {
-  font-size: 5vh;
+  font-size: 30px;
   font-weight: bold;
-  margin: 2vh auto;
   text-align: center;
   width: 50%;
   height: 70%;
@@ -116,6 +124,7 @@ h1.title {
 .scores-container {
   float: right;
   text-align: right;
+  width: 45%;
   div:first-child {
     margin-right: 5px;
   }
@@ -123,26 +132,21 @@ h1.title {
 
 .score-container,
 .chain-container {
+  $score-font-size: 14px;
+
   margin-top: 0;
-  padding: 15px 10px;
-}
-
-.score-container,
-.chain-container {
-  $height: 4vh;
-
   position: relative;
   display: inline-block;
   background: $game-container-background;
-  padding: 15px 20px;
-  font-size: $height/2;
-  height: $height;
-  width: 15vw;
-  line-height: $height;
+  padding: 30px 20px 5px; 
+  font-size: $score-font-size;
+  height: auto;
+  width: 20%;
+  line-height: auto;
   font-weight: bold;
   border-radius: 3px;
   color: white;
-  margin-top: 8px;
+  margin-top: 10px;
   text-align: center;
 
   &:after {
@@ -151,8 +155,8 @@ h1.title {
     top: 10px;
     left: 0;
     text-transform: uppercase;
-    font-size: $height/3;
-    line-height: $height/3;
+    font-size: $score-font-size;
+    line-height: auto;
     text-align: center;
     color: $tile-color;
   }
@@ -161,8 +165,8 @@ h1.title {
     position: absolute;
     right: 30px;
     color: red;
-    font-size: $height;
-    line-height: $height;
+    font-size: $score-font-size;
+    line-height: auto;
     font-weight: bold;
     color: rgba($text-color, 0.9);
     z-index: 100;
@@ -181,54 +185,61 @@ h1.title {
 
 .above-game {
   @include clearfix;
-  width: 100vw;
-  min-width: $min-width;
-  height: 15vh;
-  margin-bottom: 1vh;
+  width: $above-game-width;
+  height: $above-game-height;
 }
 
 .game-intro {
+  $intro-font-size: 14px;
+
   float: left;
-  width: 60vw;
+  width: 60%;
   height: 80%;
   margin-bottom: 0;
-  margin-left: 3vw;
-  margin-right: 3vw;
+  margin-left: 10px;
+  margin-right: 10px;
   word-wrap: break-word;
+  p {
+    font-size: $intro-font-size;
+  }
+  a {
+    font-size: $intro-font-size;
+  }
 }
 
 .restart-button {
+  $restart-font-size: 14px;
+
   @include button;
   display: block;
   text-align: center;
   float: right;
   height: 50%;
   width: 25%;
-  margin-top: 1vh;
-  margin-bottom: 1vh;
-  margin-left: 3vw;
-  margin-right: 3vw;
+  margin: 10px;
+  font-size: $restart-font-size;
 }
 
 .game-board {
-  min-width: $min-width;
+  width: $game-board-width;
+  height: $game-board-height;
 }
 
 .next-puyo-container {
   display: inline-block;
   background: darken($game-container-background, 10%);
-  padding: 0 2vw;
+  padding: 5px;
   text-decoration: none;
-  border-radius: 1vw;
+  border-radius: 10px;
   color: $bright-text-color;
-  width: 10vw;
-  min-width: $min-width/10;
-  height: 30vh;
+  width: $tile-size + 10px;
+  height: $tile-size*5;
   display: block;
   text-align: center;
   float: left;
-  margin-left: 3vw;
-  margin-right: 3vw;
+  margin-left: 5px;
+  margin-right: 5px;
+  font-size:10px
 }
 
 .game-container {
@@ -278,6 +289,8 @@ h1.title {
 
 @mixin message {
   display: none;
+  width: 100%;
+  height: 100%;
 
   position: absolute;
   top: 0;
@@ -291,26 +304,22 @@ h1.title {
   @include message;
   background: rgba($tile-color, 0.9);
   p {
-    font-size: 3vh;
-    height: 3vh;
-    line-height: 3vh;
-    margin-top: 20vh;
-    margin-left: 10vw;
-    margin-right: 10vw;
+    font-size: 14px;
+    margin: 40px;
   }
   text-align: center;
 
   button {
     @include button;
-    margin-left: 2vh;
+    margin-left: 20px;
 
-    width: 30vw;
-    height: 10vh;
+    width: 30%;
+    height: 10%;
   }
 
   .lower {
     display: block;
-    margin-top: 30vh;
+    margin-top: 30%;
   }
 
   &.game-exp {
@@ -324,30 +333,28 @@ h1.title {
 
   text-align: center;
   a {
-    font-size: 3vh;
+    font-size: 14px;
     font-weight: bold;
-    margin-top: 30vh;
+    margin-top: 40px;
   }
 
   p {
-    font-size: 7vh;
+    font-size: 14px;
     font-weight: bold;
-    height: 7vh;
-    line-height: 7vh;
-    margin-top: 20vh;
+    margin-top: 20%;
   }
 
   .lower {
     display: block;
-    margin-top: 30vh;
+    margin-top: 30%;
   }
 
   button {
     @include button;
-    margin-left: 2vh;
+    margin: 10px;
 
-    width: 30vw;
-    height: 10vh;
+    width: 30%;
+    height: 10%;
     &.keep-playing-button {
       display: none;
     }

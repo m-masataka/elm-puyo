@@ -221,7 +221,7 @@ gripChange list board keyname =
 -- VIEW
 view : Model -> Html Msg
 view model =
-   div []
+   div [ class "whole-container" ]
        [ div [ class "heading" ]
            [ h1 [ class "title" ]
                [ text "Elm Puyo" ]
@@ -273,8 +273,7 @@ viewNextPuyo list =
         puyo22 = ListEx.getAt 3 list |> Maybe.withDefault Red
     in
     div []
-        [ br [] []
-        , div [] [ img [src (getPuyoImg puyo11)] [] ]
+        [ div [] [ img [src (getPuyoImg puyo11)] [] ]
         , div [] [ img [src (getPuyoImg puyo12)] [] ]
         , br [] []
         , div [] [ img [src (getPuyoImg puyo21)] [] ]
