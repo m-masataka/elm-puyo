@@ -23,15 +23,20 @@ $tile-size: ($field-height - $grid-spacing * ($grid-row-cells + 1)) /
 $tile-border-radius: 0px;
 
 
-$text-color: #776e65;
-$bright-text-color: #f9f6f2;
+// $text-color: #776e65;
+$text-color: black;
+// $bright-text-color: #f9f6f2;
+$bright-text-color: whitesmoke;
 
-$tile-color: saturate(#eee4da, 10%);
-$tile-gold-color: saturate(#edc22e, 5%);
+//$tile-color: saturate(#eee4da, 10%);
+$tile-color: saturate(#c0c0c0, 10%);
+//$tile-gold-color: saturate(#edc22e, 5%);
+$tile-gold-color: saturate(#a9a9a9, 5%);
 $tile-gold-glow-color: lighten($tile-gold-color, 15%);
 
 $game-container-margin-top: 2px;
-$game-container-background: #bbada0;
+//$game-container-background: #bbada0;
+$game-container-background: #c0c0c0;
 
 $transition-speed: 100ms;
 
@@ -158,7 +163,7 @@ h1.title {
     font-size: $score-font-size;
     line-height: auto;
     text-align: center;
-    color: $tile-color;
+    color: $text-color;
   }
 
   .score-addition {
@@ -329,17 +334,17 @@ h1.title {
 
 .game-message {
   @include message;
-  background: rgba($tile-color, 0.5);
+  background: rgba($tile-color, 0.9);
 
   text-align: center;
   a {
-    font-size: 14px;
+    font-size: 30px;
     font-weight: bold;
     margin-top: 40px;
   }
 
   p {
-    font-size: 14px;
+    font-size: 30px;
     font-weight: bold;
     margin-top: 20%;
   }
