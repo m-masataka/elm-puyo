@@ -1,376 +1,237 @@
-port module Main exposing (main)
-
-import Array exposing (Array)
 import Browser
-import Html exposing (..)
-import Browser.Events exposing (onKeyDown)
-import Html.Attributes exposing (..)
-import Json.Decode as Decode
-import Html.Events exposing (onClick)
-import Time
-import Task
-import List.Extra as ListEx
 import Debug
+import Time
 import Random
 import Random.List as RandomList
-import Status exposing (..)
-import KeyAction exposing (..)
-import Puyo exposing (..)
+import Json.Decode as Decode
+import Browser.Events exposing (onKeyDown)
+import List.Extra as List
+import KeyMgmt exposing (..)
 import Board exposing (..)
+import Views exposing (..)
+import Types exposing (..)
 import Score exposing (..)
-import FeatherIcons
-import Json.Encode as Encode 
 
 -- Model
-type alias Model = 
-    { time : Time.Posix
-    , score: Int
-    , gripPositions: List (Int, Int)
-    , board: Board
-    , status: Status
-    , chainCounter: Int
-    , nextList: List Puyo
-    , debugmsg: String
-    }
-
 
 init : () -> ( Model, Cmd Msg )
 init _ =
     let
-        nextPuyo = [Red, Blue, Green, Red]
+        lx = List.range 0 columns |> List.map (\l -> (l * rowsLen, None))
+        board =
+            Empty |> List.repeat (rowsLen * columns) |> Board.replace lx
     in
-    ( Model ( Time.millisToPosix 0) 0 [(1,0),(1,1)] initBoard Normal 0 nextPuyo "non"
+    ( Model board (List.zip startPos [Blue, Blue]) Normal [Red, Blue, Green, Yellow] 1 0 0
       , Cmd.none
     )
 
+
 -- Update
-type Msg
-    = Tick Time.Posix
-    | KeyMsg KeyName
-    | RandPuyo (List Puyo)
-    | Restart
-    | ShowGuid
-    | BackToGame
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        KeyMsg keyname -> 
-            let
-                ngp = case model.status of
-                    Remove ->
-                        model.gripPositions
-                    Fall ->
-                        model.gripPositions
-                    _ ->
-                        gripChange model.gripPositions model.board keyname
-                gpl = List.map2 Tuple.pair model.gripPositions ngp
-                    |> List.map (\((x, y),(z,o)) ->
-                           [(x, y), (z, o)]
-                        )
-                board = updateBoardByGripPositions model.gripPositions ngp model.board
-            in
-            ( { model | board = board, gripPositions = ngp}
-            , Cmd.none
-            )
-        Tick newTime ->
-            let
-                ngp = 
-                    case model.status of
-                        Guid ->
-                            model.gripPositions
-                        End ->
-                            model.gripPositions
-                        _ -> 
-                            gripChange model.gripPositions model.board Down
-                removeList = List.map (\n -> getRemoveList n model.board) puyoList
-                falledBoard = fallDown model.board
-                status =
-                    changeStatus model.status model.gripPositions ngp (List.concat removeList) model.board falledBoard
-                gpl = List.map2 Tuple.pair model.gripPositions ngp
-                    |> List.map (\((x, y),(z,o)) ->
-                           [(x, y), (z, o)]
-                        )
-                    |> List.sortWith compareDownList 
-                board =
-                    case status of
-                        Normal ->
-                            updateBoardByList gpl model.board
-                        Remove ->
-                            List.concat removeList
-                                |> (\l -> removePuyo l  model.board)
-                        Fall ->
-                            falledBoard
-                        _ ->
-                            model.board
-
-                chainCounter = case status of
-                    Remove ->
-                        model.chainCounter + 1
-                    Fall ->
-                        model.chainCounter
-                    _ ->
-                        0
-         
-                score =
-                    calcScore
-                    model.score
-                    (List.length (List.concat removeList) )
-                    (List.filter (\l -> List.length l > 0) removeList |> List.length)
-                    chainCounter
-                    (List.map (\l -> List.length l) removeList)
-
-            in
-            ( { model | score = score, board = board, gripPositions = ngp ,status = status, chainCounter = chainCounter}
-            , Random.generate RandPuyo (RandomList.shuffle (List.append puyoList puyoList) )
-            )
-        RandPuyo puyolist ->
-            let
-                nextList = 
-                    case model.status of
-                        New ->
-                            List.take 2 puyolist
-                            |> List.append model.nextList
-                            |> List.drop 2
-                        _ ->
-                            model.nextList
-                board =
-                    case model.status of
-                        New -> 
-                            setBoard 
-                                (ListEx.getAt 0 initPositions |> Maybe.withDefault (1,0))
-                                ( Tile ( ListEx.getAt 0 model.nextList |> Maybe.withDefault Red ))
-                                model.board
-                            |> setBoard 
-                                (ListEx.getAt 1 initPositions |> Maybe.withDefault (1,1))
-                                ( Tile ( ListEx.getAt 1 model.nextList |> Maybe.withDefault Red ))
-                        _ ->
-                            model.board
-                gps = 
-                    case model.status of
-                        New -> 
-                            initPositions
-                        _ ->
-                            model.gripPositions
-            in
-            ( { model | board = board, gripPositions = gps, nextList = nextList }
-            , Cmd.none
-            )
-        Restart ->
-            ( { model | score = 0 , board = initBoard, gripPositions = initPositions, status = Normal, chainCounter = 0}
-            , Cmd.none
-            )
-        ShowGuid ->
-            ( { model | status = Guid }
-            , Cmd.none
-            )
-        BackToGame ->
-            ( { model | status = Normal }
-            , Cmd.none
-            )
-
-removePuyo : List (Int, Int) -> Board -> Board
-removePuyo list board =
-    case ListEx.getAt 0 list of
-        Just n ->
-            setBoard n  Empty board
-                 |> removePuyo (ListEx.removeAt 0 list)
-        Nothing ->
-            board
-
-
-gripChange : List (Int, Int) -> Board -> KeyName -> List (Int, Int)
-gripChange list board keyname =
     let
-        nextPositions = case keyname of
-            Down ->
-                List.map (\(x, y) -> (x, y + 1) ) list
-            Left ->
-                List.map (\(x, y) -> (x - 1, y) ) list
-            Right ->
-                List.map (\(x, y) -> (x + 1, y) ) list
-            SpinLeft ->
-                spinList list board
-            FallDown ->
-                List.range 1 (columnLength - 1)
-                |> List.map (\n -> 
-                    List.map (\(x, y) -> (x, y + n)) list
-                    |> List.map (\np ->
-                        setBoardByList list Empty board
-                        |> decideMove np
-                     )
-                     |> List.sum
-                   )
-                |> List.filter (\n -> n == 0)
-                |> List.length
-                |> (\n -> List.map (\(x, y) -> (x, y + n) ) list)
-            Other ->
-                spinList list board
-        f = List.map (\np -> 
-                setBoardByList list Empty board
-                |> decideMove np
-            ) nextPositions
-            |> List.sum
-    in 
-        if f == 0 then
-            nextPositions
-        else
-            list
+        move_ : KeyName -> List (Int, Cell)
+        move_ keyname =
+            let
+                spin_ : List (Int, Cell) -> Board -> List (Int, Cell)
+                spin_ l b =
+                    let
+                        (i1, c1) = List.getAt 0 l |> Maybe.withDefault (0, None)
+                        (i2, c2) = List.getAt 1 l |> Maybe.withDefault (0, None)
+                        np_ = 
+                            if i1 - i2 > 0  then
+                                if (i1 - i2 |> abs) == rowsLen then
+                                    [ (i1, c1), (i1 - 1, c2) ]
+                                else
+                                    [ (i1, c1), (i1 + rowsLen, c2) ]
+                            else
+                                if (i1 - i2 |> abs) == rowsLen then
+                                    [ (i1, c1), (i1 + 1, c2) ]
+                                else
+                                    [ (i1, c1), (i1 - rowsLen, c2) ]
+                    in
+                    if check_ np_ then
+                        np_
+                    else
+                        [(i1, c2), (i2, c1)]
 
+                check_ : List (Int, Cell) -> Bool
+                check_ l =
+                    List.map (\(i, c) -> Board.get i model.board) l |> List.all (\c -> c == Empty)
 
--- VIEW
-view : Model -> Html Msg
-view model =
-   div [ class "whole-container" ]
-       [ div [ class "heading" ]
-           [ h1 [ class "title" ]
-               [ text "Elm Puyo" ]
-           , div [ class "scores-container" ]
-               [ div [ class "score-container" ]
-                   [ text (String.fromInt model.score) ]
-               , div [ class "chain-container" ]
-                   [ text (String.fromInt model.chainCounter) ]
-               ]
-           ]
-       , div [ class "above-game" ]
-           [ div [ class "game-intro" ]
-               [ p [] [ text "Play " 
-                      , strong []
-                          [ text "Puyo Puyo!" ]
-                      ]
-               , p [] [ text "Check the "
-                      , a [ href "https://en.wikipedia.org/wiki/Puyo_Puyo#Gameplay", target "_blank" ]
-                          [ text "PuyoPuyo Rule" ]
-                      , text " and "
-                      , a [ href "#", onClick ShowGuid ]
-                          [ text "Operations Guid" ]
-                      ]
-               ]
-           , button
-               [ class "restart-button"
-               , onClick Restart
-               ]
-               [ text "Restart" ]
-           ]
-       , viewGameContainer model.nextList model.board
-       , viewEndMessage model.status model.score
-       , viewExplanation model.status
-       ]
+                check__ = (\l -> if check_ l then l else model.grippedPuyo)
 
-viewGameContainer : List Puyo -> Board -> Html Msg
-viewGameContainer nextList board =
-   div [class "game-board" ]
-       [ div [class "next-puyo-container"] [ viewNextPuyo nextList ]
-       , div [class "game-container"] [ viewBoard board ]
-       ]
+            in
+            case keyname of
+                Down ->
+                    check__ <| List.map (\(i, c) -> (i + rowsLen, c) ) model.grippedPuyo
+                Left ->
+                    check__ <| List.map (\(i, c) -> (i - 1, c) ) model.grippedPuyo
+                Right ->
+                    check__ <| List.map (\(i, c) -> (i + 1, c) ) model.grippedPuyo
+                _ ->
+                    spin_ model.grippedPuyo model.board
+                    -- move__ <| (\l -> if l == model.grippedPuyo then List.reverse l else l)
+                    --    <| check_ <| spin_ model.grippedPuyo model.board
 
-viewNextPuyo : List Puyo -> Html Msg
-viewNextPuyo list =
-    let
-        puyo11 = ListEx.getAt 0 list |> Maybe.withDefault Red
-        puyo12 = ListEx.getAt 1 list |> Maybe.withDefault Red
-        puyo21 = ListEx.getAt 2 list |> Maybe.withDefault Red
-        puyo22 = ListEx.getAt 3 list |> Maybe.withDefault Red
     in
-    div []
-        [ div [] [ img [src (getPuyoImg puyo11)] [] ]
-        , div [] [ img [src (getPuyoImg puyo12)] [] ]
-        , br [] []
-        , div [] [ img [src (getPuyoImg puyo21)] [] ]
-        , div [] [ img [src (getPuyoImg puyo22)] [] ]
-        ]
+    case msg of
+        KeyMsg keyname ->
+            let
+                ngp=
+                    case model.status of
+                        Normal ->
+                            move_ keyname
+                        _ ->
+                            model.grippedPuyo
+            in 
+            ( { model | grippedPuyo = ngp }, Cmd.none )
+        Tick t ->
+            let
+                timecounter = model.timecounter + 1
+                interval = 10
 
-viewBoard : Board -> Html Msg
-viewBoard board =
-    div [class "grid-container"] <| List.drop 1 <|
-        Array.toList (Array.map viewRow board)
+                down_ : List (Int, Cell) -> Board -> Bool
+                down_ l b =
+                    List.map (\(i, c) -> i) l |> List.map (\i -> i + rowsLen)
+                    |> List.map (\i -> Board.get i b) |> List.all (\i -> i == Empty)
 
-viewRow : Row -> Html Msg
-viewRow row =
-    div [class "grip-row"] <|
-        Array.toList (Array.map viewCell row)
+                remove_ : Board -> (List (List Int), Bool)
+                remove_ board_ =
+                    let
+                        chain_ : Int -> Cell -> List Int -> List Int
+                        chain_ i c l =
+                            let
+                                next = [i - rowsLen, i - 1, i + 1, i + rowsLen]
+                                c_ = Board.get i board_
+                            in
+                            if c == c_ then
+                                List.filterNot (\n -> List.member n l) next
+                                |> List.map (\n -> chain_ n c ( i :: l ))
+                                |> List.concat |> (\li -> i :: li)
+                            else
+                                []
 
-viewCell : Cell -> Html Msg
-viewCell cell =
-    case cell of
-        Tile puyo ->
-            div [class "grid-cell"]
-                [ img [src (getPuyoImg puyo)] []
-                ]
-        Empty ->
-            div [class "grid-cell"]
-                [ text ""
-                ]
+                        picked_ = List.indexedMap Tuple.pair board_
+                            |> List.filterNot (\(i, c) -> c == Empty || c == None )
+                            |> List.map (\(i, c) -> chain_ i c [] )
+                            |> List.filter (\l -> List.length l > 3)
+                    in
+                    ( picked_, List.length picked_ > 0 )
 
-viewExplanation : Status -> Html Msg
-viewExplanation status =
-    div [ class ("game-explanation" ++ getGameStatus status) ]
-        [ p []
-            [ strong []
-                [ text "HOW TO PLAY"]
-            , hr [] []
-            , text "Use your arrow keys or swipe and tap on a screen to move Puyo."
-            , br [] []
-            , br [] []
-            , i [class "fas fa-arrow-circle-left"] []
-            , i [class "fas fa-arrow-circle-right"] []
-            , i [class "fas fa-arrow-circle-down"] []
-            , text " : Move Puyo"
-            , br [] []
-            , br [] []
-            , i [class "fas fa-arrow-circle-up"] []
-            , text " or Tap  : Spin Puyo "
-            ]
-        , div [ class "lower" ]
-            [ button
-                [ class "back-button"
-                , onClick BackToGame
-                ]
-                [ text "Back To Game" ]
-            ]
-        ]
+                fall_ : Board -> ( Board, Bool )
+                fall_ board_ =
+                    let
+                        fall__ : List (Int, Cell) -> Board -> Board
+                        fall__ l b =
+                            case List.head l of
+                                Just (i, c) ->
+                                    let
+                                        fall___ : Int -> Int
+                                        fall___ j =
+                                            if Board.get (i + rowsLen * j) b == Empty then fall___ (j + 1) else j - 1
+                                    in
+                                    if List.member (Board.get i b) Board.normal &&
+                                        Board.get (i + rowsLen) b == Empty then
+                                        Board.replace [(i, Empty), (i + rowsLen * (fall___ 1), c)] b
+                                        |> fall__ (List.tail l |> Maybe.withDefault [])
+                                    else
+                                        fall__ (List.tail l |> Maybe.withDefault []) b
+                                Nothing ->
+                                    b
+                        
+                        nb = fall__ (List.indexedMap Tuple.pair board_ |> List.reverse) board_
+                    in
+                    ( nb , nb /= board_)
 
-viewEndMessage : Status -> Int -> Html Msg
-viewEndMessage status score =
-    div [ class ("game-message" ++ getGameStatus status)]
-        [ p []
-            [ text "Game Over" ]
-        , a []
-            [ text ("Score: " ++ (String.fromInt score)) ]
-        , div [ class "lower" ]
-            [ button
-                [ class "retry-button"
-                , onClick Restart
-                ]
-                [ text "Try again" ]
-            ]
-        ]
+                (ngp, board, status) =
+                    case model.status of
+                        Normal ->
+                            if down_ model.grippedPuyo model.board then
+                                if (modBy interval model.timecounter == 0) then
+                                    ( move_ Down, model.board, model.status)
+                                else
+                                    ( model.grippedPuyo, model.board, model.status)
+                            else
+                                ( model.grippedPuyo, Board.replace model.grippedPuyo model.board, Fall)
+                        Next ->
+                            ( model.grippedPuyo, model.board, Normal)
+                        Fall ->
+                            let
+                                (newBoard, bool) = fall_ model.board
+                            in
+                            if modBy interval model.timecounter == 0 then
+                                ( model.grippedPuyo, newBoard, Remove)
+                            else
+                                ( model.grippedPuyo, model.board, if bool then model.status else Remove)
+                        Remove ->
+                            let
+                                (list, bool) = remove_ model.board
+                                rmList_ = List.map (\i -> (i, Empty)) (list |> List.concat)
+                            in
+                            if bool then
+                                if modBy interval model.timecounter == 0 then
+                                    ( model.grippedPuyo, Board.replace rmList_ model.board, Fall)
+                                else
+                                    ( model.grippedPuyo, model.board, model.status)
+                            else
+                                ( model.grippedPuyo, model.board, Next)
+                        _ ->
+                            ( model.grippedPuyo, model.board, model.status)
 
-getGameStatus : Status -> String
-getGameStatus status =
-    case status of
-        End ->
-            " game-over"
-        Guid ->
-            " game-exp"
-        _ ->
-            ""
+                (chain, rlist) =
+                    case model.status of
+                        Remove ->
+                            let
+                                (list, bool) = remove_ model.board
+                            in
+                            if modBy interval model.timecounter == 0 && bool then (model.chain + 1, list) else (model.chain, [])
+                        Fall ->
+                            (model.chain, [])
+                        _ ->
+                            (0, [])
 
--- SUBSCRIPTIONS
+                score = if modBy interval model.timecounter == 0 then
+                        calcScore model.score
+                            (rlist |> List.concat |> List.length) --  Number of Removed Puyo
+                            (rlist |> List.concat |> List.unique |> List.length) -- Color Bonus
+                            chain -- Chain Bonus
+                            ( List.map (\l -> List.length l) rlist ) --  Linking Bonus
+                    else
+                        model.score
+
+            in
+            ( { model | grippedPuyo = ngp, board = board, status = status, timecounter = timecounter, chain = chain, score = score}
+            , case model.status of 
+                Next ->
+                    Random.generate GenPuyo (RandomList.shuffle (List.append normalPuyo normalPuyo) )
+                _ ->
+                    Cmd.none
+            )
+        GenPuyo puyolist ->
+            let
+                (nextPuyo, status, grippedPuyo) =
+                    if ( Board.get (List.getAt 0 startPos |> Maybe.withDefault 0) model.board) == Empty then
+                        ( List.append (List.take 2 puyolist) (List.take 2 model.nextPuyo)
+                        , Normal
+                        , List.zip startPos [Board.get 2 model.nextPuyo, Board.get 3 model.nextPuyo]
+                        )
+                    else
+                        (model.nextPuyo, End, model.grippedPuyo)
+            in
+            ( { model | nextPuyo = nextPuyo, status = status, grippedPuyo = grippedPuyo }
+            , Cmd.none
+            )
+
+
+-- SUB
 subscriptions model =
     Sub.batch
-        [ Time.every 1000 Tick
-        , onKeyDown (Decode.map KeyMsg keyDecoder)
-        , swipeDirectionArrow handleSwipe
+        [ onKeyDown (Decode.map KeyMsg keyDecoder )
+        , Time.every 50 Tick
         ]
 
-handleSwipe : Encode.Value -> Msg
-handleSwipe value =
-    case Decode.decodeValue swipeDecoder value of
-        Ok keymanager ->
-            KeyMsg (toKeyName keymanager.key)
-        Err _ ->
-            Restart
 
 -- MAIN
 main =
@@ -380,6 +241,3 @@ main =
         , subscriptions = subscriptions
         , view = view
         }
-
--- port
-port swipeDirectionArrow : (Encode.Value -> msg) -> Sub msg

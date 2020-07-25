@@ -1,0 +1,78 @@
+.game-container {
+  width:100%;
+  margin-top: 50px;
+}
+
+.board-container {
+  width: 300px;
+  margin:  0 auto;
+}
+
+.next-puyo {
+  width: 40px;
+  height: 160px;
+  float: left;
+  background: rgba(241, 228, 215, 0.35);
+  margin-right: 10px;
+}
+
+.grid-container {
+  width: 240px;
+  height: 480px;
+  background: rgba(241, 228, 215, 0.35);
+  display:inline-block;
+  position: relative;
+}
+
+.grid-container .grid-row {
+  width: 240px;
+}
+
+.grid-container .grid-row .grid-cell {
+  width: 40px;
+  height: 40px;
+  float: left;
+}
+
+.puyo {
+  width: 100%;
+}
+
+.number {
+  width: 20px;
+}
+
+.score-title {
+  font-size: 20px;
+  float: left;
+  margin-right: 20px;
+  font-family: arial black;
+}
+
+.batankyu.fade {
+  margin-top: 60px;
+  width: 100%;
+  position: absolute;
+  animation-name: fade-batankyu;
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
+  animation-delay: 0.3s;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fade-batankyu {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -20px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.batankyu .image {
+  width: 100%;
+}
