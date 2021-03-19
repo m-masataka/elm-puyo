@@ -3,17 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Mains</title>
+  <meta name="viewport" content="width=300px,initial-scale=1,user-scalable=no">
   <link rel="stylesheet" href="src/main.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <script src="main.js"></script>
+  <script type="module" src="./src/touchInputManager.js"></script>
 </head>
 
 <body>
   <div id="elm"></div>
-  <script>
+  <script type="module">
+  import touchInputManager from './src/touchInputManager.js';
   var app = Elm.Main.init({
     node: document.getElementById('elm')
   });
+  touchInputManager(app);
   </script>
 </body>
 </html>

@@ -1,27 +1,137 @@
+:root {
+  --cell-size: 25px;
+  --board-size: calc(12 * var(--cell-size));
+}
+
+@font-face {
+	font-family: PixelMplus12-Regular;
+	src: url('/font/PixelMplus12-Regular.ttf') format("truetype");
+}
+
+body {
+  background-image:url("/img/wall3.png");
+  background-size: var(--cell-size);
+}
+
 .game-container {
   width:100%;
-  margin-top: 50px;
 }
 
 .board-container {
-  width: 300px;
+  width: var(--board-size);
   margin:  0 auto;
 }
 
+.menu-container {
+  position: absolute;
+  top: 50px;
+  width: var(--board-size);
+  margin: 2em 0;
+  font-weight: bold;
+  font-family: PixelMplus12-Regular;
+  color: #6091d3;/*文字色*/
+  background: #FFF;
+  border: solid 3px #6091d3;/*線*/
+  border-radius: 10px;/*角の丸み*/
+  animation: fadeIn 1s;
+}
+.next-cell {
+  height: var(--cell-size);
+}
 .next-puyo {
-  width: 40px;
+  width: var(--cell-size);
   height: 160px;
   float: left;
   background: rgba(241, 228, 215, 0.35);
-  margin-right: 10px;
+  margin-left: var(--cell-size);
+}
+
+.status-panel {
+  width: calc(var(--cell-size)*3);
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+}
+.status-frame {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin-top: 5px;
+}
+.status-frame img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.status-frame p {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  margin: 0px;
+  color: gray;
+  padding: 5px 0px 0px 0px;
+  font-weight: bold;
+  font-family: PixelMplus12-Regular;
+}
+
+.game-control-panel {
+  margin: 0px 0px 5px 0px;
+}
+
+.game-btn {
+  display: inline-block;
+  position: relative;
+  width: 50px;
+  height: 50px;
+  margin: 10px 12px 0px 13px;
+}
+.game-btn img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.game-info {
+  position: relative;
+  width: 100%;
+  height: 50px;
+}
+.game-info img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.game-info p {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  margin: 0px;
+  color: black;
+  padding: 2px;
+  font-weight: bold;
+  font-family: PixelMplus12-Regular;
+}
+
+.game-panel {
+  background-image:url("/img/w.png");
+  background-size: var(--cell-size);
+  padding-top: var(--cell-size);
+  margin: 0px;
+  padding-bottom: 0px;
+  height: calc(var(--cell-size)*13);
+}
+.game-board-container {
+  width: calc(7 * var(--cell-size));
+  display:inline-block;
+  position: relative;
 }
 
 .grid-container {
-  width: 240px;
-  height: 480px;
-  background: rgba(241, 228, 215, 0.35);
-  display:inline-block;
-  position: relative;
+  width: calc(6 * var(--cell-size));
+  height: calc(12 * var(--cell-size));
+  margin: 0px 0px var(--cell-size) var(--cell-size);
+  background: rgb(47, 35, 81);
 }
 
 .grid-container .grid-row {
@@ -29,24 +139,42 @@
 }
 
 .grid-container .grid-row .grid-cell {
-  width: 40px;
-  height: 40px;
+  width: var(--puyo-size);
+  height: var(--puyo-size);
   float: left;
+}
+
+.view-cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
 }
 
 .puyo {
   width: 100%;
 }
 
-.number {
-  width: 20px;
+.score {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  margin-top: 5px;
 }
-
-.score-title {
+.score img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.score p {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  margin: 0px;
+  color:black;
+  padding: 5px 0px 0px 0px;
+  font-weight: bold;
   font-size: 20px;
-  float: left;
-  margin-right: 20px;
-  font-family: arial black;
+  font-family: PixelMplus12-Regular;
 }
 
 .batankyu.fade {
@@ -62,7 +190,7 @@
   animation-fill-mode: forwards;
 }
 
-@keyframes fade-batankyu {
+/*@keyframes fade-batankyu {
   0% {
     opacity: 0;
     transform: translate3d(0, -20px, 0);
@@ -71,8 +199,172 @@
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
-}
+}*/
 
 .batankyu .image {
   width: 100%;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0}
+  to {opacity: 1} 
+}
+
+@keyframes fadeOut {
+  from {opacity: 1}
+  to {opacity: 0} 
+}
+
+/* */
+.rule-board {
+  width: 340px;
+  height: 200px;
+  margin-top: 20px;
+}
+
+
+/* slider */
+.slider {
+  width: var(--board-size);
+  overflow: hidden;
+  animation: fadeIn 1s;
+  margin-top: 20px;
+}
+ 
+.slides {
+  display: flex;
+  
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  
+  /*
+  scroll-snap-points-x: repeat(300px);
+  scroll-snap-type: mandatory;
+  */
+}
+.slides::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.slides::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 10px;
+}
+.slides::-webkit-scrollbar-track {
+  background: transparent;
+}
+.slides > div {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: 100%;
+  height: 200px;
+  margin-right: 50px;
+  border-radius: 10px;
+  background: #eee;
+  transform-origin: center center;
+  transform: scale(1);
+  transition: transform 0.5s;
+  position: relative;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+}
+
+.author-info {
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 0.75rem;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin: 0;
+}
+.author-info a {
+  color: white;
+}
+ 
+.slider > a {
+  display: inline-flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: white;
+  text-decoration: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin: 0 0 0.5rem 0;
+  position: relative;
+}
+.slider > a:active {
+  top: 1px;
+}
+.slider > a:focus {
+  background: #000;
+}
+
+
+.mode-toggle {
+  width: var(--board-size);
+}
+ 
+ /* === チェックボックス ==================================== */
+.mode-toggle input[type="checkbox"] {
+  display        : none;            /* チェックボックス非表示 */
+}
+ 
+ /* === チェックボックスのラベル（標準） ==================== */
+.mode-toggle label {
+  display        : flex;               /* ボックス要素に変更 */
+  box-sizing     : border-box;          /* 枠線を含んだサイズ */
+  border: 2px solid #5b483c;
+  border-radius: 5px;
+  height: 40px;
+  background: #e1cdbb;
+
+  box-shadow     : 3px 3px 6px #888;    /* 影付け             */
+  transition     : .5s;                 /* 滑らか変化         */
+  margin: 10px;
+}
+ 
+ /* === チェックボックスのラベル（ONの時） ================== */
+.mode-toggle #mode-toggle-check:checked + label {
+  background     : #78bd78;             /* 背景色             */
+  box-shadow     : none;                /* 影を消す           */
+}
+ 
+ /* === ラベル内の画像（標準） ============================== */
+.mode-toggle label img{
+  width: 30px;
+  height: 30px;
+  display        : block;               /* ブロック化         */
+  margin         : 4px;  /* 上は6pxで中央寄せ  */
+}
+
+.mode-toggle label p{
+  display: block;
+  margin : 8px;
+  color:black;
+}
+ 
+ /* === ラベル内の画像（ONの時） ============================ */
+.mode-toggle #mode-toggle-check:checked + label img {
+  animation      : sample4On .5s ease;  /* アニメーション実行 */
+}
+@keyframes sample4On {
+  100% {transform  : rotate(360deg)}    /* 時計回り回転       */
+}
+ 
+ /* === ラベル内の画像（OFFの時） =========================== */
+.mode-toggle #mode-toggle-check:not(:checked) + label img {
+  animation      : sample4Off .5s ease; /* アニメーション実行 */
+}
+@keyframes sample4Off {
+  100% {transform  : rotate(-360deg)}   /* 反時計回り回転     */
 }

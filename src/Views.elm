@@ -1,10 +1,11 @@
 module Views exposing (..)
 
 import Types exposing (..)
-import Board
+import Board exposing (..)
 import Array exposing (Array)
 import Html.Attributes exposing (..)
 import Html exposing (..)
+import Html.Events exposing (onClick)
 
 
 -- VIEW
@@ -13,115 +14,186 @@ view : Model -> Html Msg
 view model =
     div [ class "game-container" ]
         [ div [ class "board-container" ]
-            [ viewNext model.nextPuyo
-            , div [] [ viewBoard model ]
+            [ div [class "game-control-panel" ]
+                [ div [ class "game-btn" ,onClick Menu ]
+                         [ img [src "img/menu.png"] []
+                         ]
+                , div [ class "game-btn" ,onClick Pouse ]
+                         [ img [src "img/stop.png" ] []
+                         ]
+                , div [ class "game-btn" ,onClick Start ]
+                         [ img [src "img/start.png" ] []
+                         ]
+                , div [ class "game-btn" ,onClick Restart ]
+                         [ img [src "img/restart.png" ] []
+                         ]
+                , div [ class "game-info" ]
+                    [ img [src "img/frame.png"] []
+                    , p [] [ text <| model.viewCondition ]
+                    ]
+                ]
+            , div [ class "game-panel" ]
+                [ viewNext model.nextPuyo
+                , div [ class "game-board-container" ]
+                    [ div [class "grid-container" ]
+                        [ viewBoard model
+                        ]
+                    ]
+                , div [class "status-panel"]
+                    [ div [ class "status-frame" ]
+                        [ img [src "img/frame.png"] []
+                        , p [] 
+                            [ span [] [text "chain"]
+                            , br [][]
+                            , span [] [text <| String.fromInt model.maxChain ]
+                            ]
+                        ]
+                    ]
+                ]
             , viewScore model
+            , viewMenu model
+            ]
+        ]
+
+viewMenu : Model -> Html Msg
+viewMenu model =
+    let
+        modeToString : Mode -> String
+        modeToString m =
+            case m of
+                Tokopuyo -> "とことんぷよぷよ"
+                Nazopuyo -> "なぞぷよ"
+    in
+    case model.status of
+        StartMenu ->
+            let
+                imgSrc = case model.mode of
+                    Nazopuyo ->
+                        "/img/puyo_blue.gif"
+                    Tokopuyo ->
+                        "/img/puyo_red.gif"
+            in
+            div [ class "menu-container" ]
+                [ div [ class "mode-toggle" ]
+                    [ input [ type_ "checkbox", id "mode-toggle-check", onClick ChangeMode] []
+                    , label [for "mode-toggle-check"]
+                        [ img [ src imgSrc ] [] 
+                        , p [] [ text <| modeToString model.mode ]
+                        ]
+                    ]
+                , viewGame model
+                , div []
+                    [ div [ class "game-btn", onClick Start ]
+                        [ img [src "img/start.png" ] []
+                        ]
+                    , div [ class "game-btn", onClick Restart ]
+                        [ img [src "img/restart.png" ] []
+                        ]
+                    ]
+                ]
+        _ ->
+            div [][]
+
+viewGame : Model -> Html Msg
+viewGame model =
+    case model.mode of 
+        Nazopuyo ->
+            div [ class "slider" ]
+                [ div [ class "slides" ]
+                    <| List.map viewStageInfo model.gameIndex
+                ]
+        Tokopuyo ->
+            div [ class "rule-board"]
+                [ div [] []
+                ]
+
+viewStageInfo : GameInfo -> Html Msg
+viewStageInfo stageInfo =
+    div [] 
+        [ table [] 
+            [ tr [] 
+                [ td [] [text "レベル"] 
+                , td [] [text stageInfo.level] 
+                ]
+            , tr []
+                [ td [] [text "条件"] 
+                , td []
+                    [ text
+                        <| readableCondition stageInfo.conditions.condition
+                        (stageInfo.conditions.c |> Maybe.withDefault "")
+                        (stageInfo.conditions.n |> Maybe.withDefault 0)
+                    ] 
+                ]
+            , tr []
+                [ td [] [
+                    div [ class "game-btn", onClick (GetNewBoard stageInfo.path) ]
+                        [ img [src "img/start.png" ] [] ]
+                    ]
+                ]
             ]
         ]
 
 
-viewNext : List Cell -> Html Msg
+viewNext : List (List Cell) -> Html Msg
 viewNext l =
+    let
+        width = 25
+        nextcell : Cell -> Html Msg
+        nextcell cell =
+            div [ class "next-cell" ]
+                [ 
+                    case cell of
+                        Empty ->
+                            img [] []
+                        _ ->
+                            img [ src ("img/puyo_" ++ cellToString cell ++ ".png") , class "puyo" ] []
+                ]
+        nextSet : (Int, List (Cell))-> Html Msg
+        nextSet (n ,l_) =
+            div [ class "view-next"
+                , style "width" (String.fromInt (width - (n * 1)) ++ "px")
+                , style "margin-bottom" "10px"
+                ]
+                <| List.map nextcell l_
+    in
     div [ class "next-puyo" ]
-        <| List.map viewCell l
+        <| List.map nextSet <| List.indexedMap Tuple.pair l
 
 
 viewBoard : Model -> Html Msg
 viewBoard model =
     let
-        lx = List.range 0 columns |> List.map (\a -> a * rowsLen ) 
-        ly = List.range 1 columns |> List.map (\a -> a * rowsLen - 1 )
-        mat = List.map2 Tuple.pair lx ly
+        width = 25
+        cell_ : Float -> Float -> Cell -> Html Msg
+        cell_ x y cell =
+            div [ class "view-cell"
+                , style "position" "absolute"
+                , style "top" (String.fromFloat (y * width) ++ "px")
+                , style "left" (String.fromFloat ((x * width) + width) ++ "px")
+                ] 
+                [ img
+                    [ src ("/img/puyo_"++ cellToString cell ++".png")
+                    , class "puyo"
+                    ]
+                    []
+                ]
     in
-    div [ class "grid-container" ]
-        [ viewEnd model
-        , div [] 
-            <| List.map (\(x, y) -> viewRow x y model) mat
-        ]
-
-
-viewRow : Int -> Int -> Model -> Html Msg
-viewRow i j model =
-    div [class "grid-row"] <| 
-        if i /= 0 then
-            let
-                board = if model.status == Normal then
-                        model.board |> Board.replace model.grippedPuyo
-                    else
-                        model.board
-            in
-            List.map viewCell ( board |> Array.fromList |> Array.slice (i + 1) (j + 1) |> Array.toList)
-        else
-            []
-
-
-viewCell : Cell -> Html Msg
-viewCell cell =
-    case cell of
-        Empty ->
-            div [class "grid-cell"] 
-                [ img [ class "puyo"
-                  ]
-                  []
-                ]
-        Red ->
-            div [class "grid-cell"] 
-                [ img
-                    [ src "/img/puyo_1.png"
-                    , class "puyo"
-                    ]
-                    []
-                ]
-        Blue ->
-            div [class "grid-cell"] 
-                [ img
-                    [ src "/img/puyo_2.png"
-                    , class "puyo"
-                    ]
-                    []
-                ]
-        Yellow ->
-            div [class "grid-cell"] 
-                [ img
-                    [ src "/img/puyo_3.png"
-                    , class "puyo"
-                    ]
-                    []
-                ]
-        Green ->
-            div [class "grid-cell"] 
-                [ img
-                    [ src "/img/puyo_4.png"
-                    , class "puyo"
-                    ]
-                    []
-                ]
-        _ -> 
-            div [class "grid-cell"] 
-                [ text "None"
-                ]
+    div []
+        <| List.map (\c -> cell_ c.x c.y c.cell) model.viewBoard
 
 
 viewScore : Model -> Html Msg
 viewScore model =
-    let
-        list = String.fromInt model.score |> String.padLeft 10 '0' |> String.split ""
-        number_ : String -> Html Msg
-        number_ i =
-            img [ src ("/img/"++ i ++".png"), class "number" ] []
-    in
     div [ class "score" ]
-        [ div [ class "score-title" ]
-            [ text "Score" ]
-        , div []
-            <| List.map number_ list
+        [ img [src "img/frame.png"] []
+        , p [] [ text <| (++) "Score : " <| String.padLeft 10 '0' <| String.fromInt model.score ]
         ]
+
 
 viewEnd: Model -> Html Msg
 viewEnd model =
     if model.status == End then
-        div [ class "batankyu fade" ]
-            [ img [ src "img/batankyu.png", class "image" ] [] ]
+        div [] []
     else
         div [] []
 

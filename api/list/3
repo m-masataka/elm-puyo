@@ -1,0 +1,69 @@
+{
+  "no": "3",
+  "level": "甘口",
+  "move": "2手",
+  "creator": "しろま",
+  "conditions": {
+    "condition": "n_chains",
+    "c": null,
+    "n": 6
+  },
+  "board": [
+    {
+      "color": "blue",
+      "cells": [
+        78,
+        75,
+        74,
+        72,
+        69,
+        59,
+        58
+      ]
+    },
+    {
+      "color": "red",
+      "cells": [
+        77,
+        76,
+        73,
+        70,
+        67,
+        57,
+        56
+      ]
+    },
+    {
+      "color": "yellow",
+      "cells": [
+        71,
+        65,
+        64
+      ]
+    },
+    {
+      "color": "green",
+      "cells": [
+        68,
+        63,
+        62
+      ]
+    }
+  ],
+  "next": [
+    {
+      "order": 1,
+      "colors": [
+        "yellow",
+        "blue"
+      ]
+    },
+    {
+      "order": 3,
+      "colors": [
+        "red",
+        "green"
+      ]
+    }
+  ]
+}

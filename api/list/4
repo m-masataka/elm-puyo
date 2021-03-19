@@ -1,0 +1,93 @@
+{
+  "no": "4",
+  "level": "辛口",
+  "move": "4手",
+  "creator": "しろま",
+  "conditions": {
+    "condition": "n_chains",
+    "c": null,
+    "n": 8
+  },
+  "board": [
+    {
+      "color": "ojama",
+      "cells": [
+        78
+      ]
+    },
+    {
+      "color": "blue",
+      "cells": [
+        77,
+        72,
+        71,
+        54,
+        53,
+        48
+      ]
+    },
+    {
+      "color": "yellow",
+      "cells": [
+        76,
+        75,
+        70,
+        66,
+        65,
+        60
+      ]
+    },
+    {
+      "color": "red",
+      "cells": [
+        74,
+        73,
+        67,
+        64,
+        63,
+        57
+      ]
+    },
+    {
+      "color": "green",
+      "cells": [
+        69,
+        68,
+        62,
+        59,
+        58,
+        52
+      ]
+    }
+  ],
+  "next": [
+    {
+      "order": 1,
+      "colors": [
+        "red",
+        "yellow"
+      ]
+    },
+    {
+      "order": 3,
+      "colors": [
+        "green",
+        "blue"
+      ]
+    },
+    {
+      "order": 5,
+      "colors": [
+        "yellow",
+        "blue"
+      ]
+    },
+    {
+      "order": 7,
+      "colors": [
+        "green",
+        "red"
+      ]
+    }
+  ]
+}
