@@ -1,12 +1,22 @@
+<!DOCTYPE HTML>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Main</title>
-  <meta name="viewport" content="width=340px,initial-scale=1">
-  <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+  <title>Mains</title>
+  <meta name="viewport" content="width=300px,initial-scale=1,user-scalable=no">
+  <link rel="stylesheet" href="src/main.css">
+  <script src="main.js"></script>
+  <script type="module" src="./src/touchInputManager.js"></script>
 </head>
-  <body>
-    <div id="elm-node"></div>
-  </body>
-  <script type="text/javascript" src="/elm-puyo/dist/bundle-elm.js"></script>
+
+<body>
+  <div id="elm"></div>
+  <script type="module">
+  import touchInputManager from './src/touchInputManager.js';
+  var app = Elm.Main.init({
+    node: document.getElementById('elm')
+  });
+  touchInputManager(app);
+  </script>
+</body>
 </html>
