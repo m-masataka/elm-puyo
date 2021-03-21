@@ -25,6 +25,12 @@ jobs:
         run: |
           git config --local user.email "m.mizukoshi.wakuwaku@gmail.com"
           git config --local user.name "m-masataka"
+      
+      - name: test
+        run: ls -al
+
+      - name: test
+        run: pwd
 
       - uses: actions/checkout@v2
         with:
