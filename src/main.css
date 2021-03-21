@@ -5,11 +5,11 @@
 
 @font-face {
 	font-family: PixelMplus12-Regular;
-	src: url('/elm-puyo/font/PixelMplus12-Regular.ttf') format("truetype");
+	src: url('font/PixelMplus12-Regular.ttf') format("truetype");
 }
 
 body {
-  background-image:url("/elm-puyo/img/wall3.png");
+  background-image:url("img/wall3.png");
   background-size: var(--cell-size);
 }
 
@@ -114,7 +114,7 @@ body {
 }
 
 .game-panel {
-  background-image:url("/img/w.png");
+  background-image:url("img/w.png");
   background-size: var(--cell-size);
   padding-top: var(--cell-size);
   margin: 0px;
