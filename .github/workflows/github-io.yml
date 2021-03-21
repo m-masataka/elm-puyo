@@ -23,8 +23,8 @@ jobs:
 
       - name: git setting
         run: |
-          git config --local user.email "m.mizukoshi.wakuwaku@gmail.com"
-          git config --local user.name "m-masataka"
+          git config --global user.email "m.mizukoshi.wakuwaku@gmail.com"
+          git config --global user.name "m-masataka"
       
       - name: test
         run: ls -al
