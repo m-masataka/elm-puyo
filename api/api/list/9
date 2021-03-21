@@ -1,0 +1,70 @@
+{
+  "no": "9",
+  "level": "甘口",
+  "move": "3手",
+  "creator": "ズバさん",
+  "conditions": {
+    "condition": "n_chains",
+    "c": null,
+    "n": 5
+  },
+  "board": [
+    {
+      "color": "green",
+      "cells": [
+        78,
+        77,
+        76,
+        69,
+        68,
+        67
+      ]
+    },
+    {
+      "color": "yellow",
+      "cells": [
+        75,
+        74,
+        73,
+        61
+      ]
+    },
+    {
+      "color": "red",
+      "cells": [
+        72,
+        66
+      ]
+    },
+    {
+      "color": "blue",
+      "cells": [
+        71,
+        70
+      ]
+    }
+  ],
+  "next": [
+    {
+      "order": 1,
+      "colors": [
+        "blue",
+        "green"
+      ]
+    },
+    {
+      "order": 3,
+      "colors": [
+        "red",
+        "blue"
+      ]
+    },
+    {
+      "order": 5,
+      "colors": [
+        "green",
+        "red"
+      ]
+    }
+  ]
+}

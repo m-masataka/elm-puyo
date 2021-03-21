@@ -1,0 +1,115 @@
+{
+  "no": "7",
+  "level": "辛口",
+  "move": "6手",
+  "creator": "空破斬さん",
+  "conditions": {
+    "condition": "n_chains",
+    "c": null,
+    "n": 8
+  },
+  "board": [
+    {
+      "color": "green",
+      "cells": [
+        78,
+        77,
+        76,
+        68,
+        62
+      ]
+    },
+    {
+      "color": "purple",
+      "cells": [
+        75,
+        74,
+        73,
+        71,
+        65,
+        59
+      ]
+    },
+    {
+      "color": "ojama",
+      "cells": [
+        72,
+        67,
+        66,
+        61,
+        60,
+        55,
+        54,
+        33
+      ]
+    },
+    {
+      "color": "blue",
+      "cells": [
+        70,
+        64,
+        58
+      ]
+    },
+    {
+      "color": "red",
+      "cells": [
+        69,
+        63,
+        57
+      ]
+    },
+    {
+      "color": "yellow",
+      "cells": [
+        51,
+        45,
+        39
+      ]
+    }
+  ],
+  "next": [
+    {
+      "order": 1,
+      "colors": [
+        "green",
+        "green"
+      ]
+    },
+    {
+      "order": 3,
+      "colors": [
+        "red",
+        "green"
+      ]
+    },
+    {
+      "order": 5,
+      "colors": [
+        "green",
+        "green"
+      ]
+    },
+    {
+      "order": 7,
+      "colors": [
+        "yellow",
+        "green"
+      ]
+    },
+    {
+      "order": 9,
+      "colors": [
+        "purple",
+        "blue"
+      ]
+    },
+    {
+      "order": 11,
+      "colors": [
+        "purple",
+        "green"
+      ]
+    }
+  ]
+}

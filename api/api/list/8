@@ -1,0 +1,87 @@
+{
+  "no": "8",
+  "level": "辛口",
+  "move": "5手",
+  "creator": "空破斬さん",
+  "conditions": {
+    "condition": "n_chains",
+    "c": null,
+    "n": 7
+  },
+  "board": [
+    {
+      "color": "green",
+      "cells": [
+        78,
+        77,
+        72,
+        63,
+        62,
+        60,
+        57,
+        54,
+        53
+      ]
+    },
+    {
+      "color": "ojama",
+      "cells": [
+        76,
+        71,
+        70,
+        69
+      ]
+    },
+    {
+      "color": "yellow",
+      "cells": [
+        75,
+        74,
+        68,
+        66,
+        65,
+        59,
+        56,
+        51,
+        50
+      ]
+    }
+  ],
+  "next": [
+    {
+      "order": 1,
+      "colors": [
+        "red",
+        "red"
+      ]
+    },
+    {
+      "order": 3,
+      "colors": [
+        "red",
+        "red"
+      ]
+    },
+    {
+      "order": 5,
+      "colors": [
+        "green",
+        "yellow"
+      ]
+    },
+    {
+      "order": 7,
+      "colors": [
+        "green",
+        "yellow"
+      ]
+    },
+    {
+      "order": 9,
+      "colors": [
+        "green",
+        "yellow"
+      ]
+    }
+  ]
+}
