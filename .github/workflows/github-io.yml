@@ -18,12 +18,17 @@ jobs:
       - name: saving data
         run: cp -r ./ /tmp/code
       
+      - name: install git
+        run: apk add git
+
+      - name: git setting
+        run: |
+          git config --local user.email "m.mizukoshi.wakuwaku@gmail.com"
+          git config --local user.name "m-masataka"
+
       - uses: actions/checkout@v2
         with:
           ref: gh-pages
-
-      - name: install git
-        run: apk add git
 
       - name: copy files
         run: |
