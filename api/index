@@ -1,0 +1,102 @@
+[
+  {
+    "no": "1",
+    "path": "api/list/1",
+    "level": "激辛",
+    "conditions": {
+      "condition": "n_chains",
+      "c": null,
+      "n": 10
+    }
+  },
+  {
+    "no": "2",
+    "path": "api/list/2",
+    "level": "激辛",
+    "conditions": {
+      "condition": "n_chains",
+      "c": null,
+      "n": 8
+    }
+  },
+  {
+    "no": "3",
+    "path": "api/list/3",
+    "level": "甘口",
+    "conditions": {
+      "condition": "n_chains",
+      "c": null,
+      "n": 6
+    }
+  },
+  {
+    "no": "4",
+    "path": "api/list/4",
+    "level": "辛口",
+    "conditions": {
+      "condition": "n_chains",
+      "c": null,
+      "n": 8
+    }
+  },
+  {
+    "no": "5",
+    "path": "api/list/5",
+    "level": "甘口",
+    "conditions": {
+      "condition": "n_chains",
+      "c": null,
+      "n": 4
+    }
+  },
+  {
+    "no": "6",
+    "path": "api/list/6",
+    "level": "中辛",
+    "conditions": {
+      "condition": "clear_c",
+      "c": "red",
+      "n": null
+    }
+  },
+  {
+    "no": "7",
+    "path": "api/list/7",
+    "level": "辛口",
+    "conditions": {
+      "condition": "n_chains",
+      "c": null,
+      "n": 8
+    }
+  },
+  {
+    "no": "8",
+    "path": "api/list/8",
+    "level": "辛口",
+    "conditions": {
+      "condition": "n_chains",
+      "c": null,
+      "n": 7
+    }
+  },
+  {
+    "no": "9",
+    "path": "api/list/9",
+    "level": "甘口",
+    "conditions": {
+      "condition": "n_chains",
+      "c": null,
+      "n": 5
+    }
+  },
+  {
+    "no": "10",
+    "path": "api/list/10",
+    "level": "中辛",
+    "conditions": {
+      "condition": "n_chains",
+      "c": null,
+      "n": 7
+    }
+  }
+]

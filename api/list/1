@@ -1,0 +1,103 @@
+{
+  "no": "1",
+  "level": "激辛",
+  "move": "5手",
+  "creator": "しろま",
+  "conditions": {
+    "condition": "n_chains",
+    "c": null,
+    "n": 10
+  },
+  "board": [
+    {
+      "color": "red",
+      "cells": [
+        78,
+        77,
+        71,
+        69,
+        68,
+        67,
+        58,
+        55,
+        53,
+        50,
+        49,
+        47,
+        32
+      ]
+    },
+    {
+      "color": "yellow",
+      "cells": [
+        76,
+        73,
+        65,
+        61,
+        59,
+        57,
+        52,
+        43,
+        38
+      ]
+    },
+    {
+      "color": "blue",
+      "cells": [
+        75,
+        74,
+        72,
+        66,
+        63,
+        62,
+        60,
+        56,
+        44
+      ]
+    },
+    {
+      "color": "ojama",
+      "cells": [
+        70,
+        64
+      ]
+    }
+  ],
+  "next": [
+    {
+      "order": 1,
+      "colors": [
+        "blue",
+        "red"
+      ]
+    },
+    {
+      "order": 3,
+      "colors": [
+        "yellow",
+        "yellow"
+      ]
+    },
+    {
+      "order": 5,
+      "colors": [
+        "yellow",
+        "blue"
+      ]
+    },
+    {
+      "order": 7,
+      "colors": [
+        "red",
+        "red"
+      ]
+    },
+    {
+      "order": 9,
+      "colors": [
+        "red",
+        "blue"
+      ]
+    }
+  ]
+}

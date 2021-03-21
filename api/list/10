@@ -1,0 +1,94 @@
+{
+  "no": "10",
+  "level": "中辛",
+  "move": "5手",
+  "creator": "空破斬さん",
+  "conditions": {
+    "condition": "n_chains",
+    "c": null,
+    "n": 7
+  },
+  "board": [
+    {
+      "color": "yellow",
+      "cells": [
+        78,
+        77,
+        69,
+        68,
+        61
+      ]
+    },
+    {
+      "color": "green",
+      "cells": [
+        76,
+        70,
+        64
+      ]
+    },
+    {
+      "color": "red",
+      "cells": [
+        75,
+        74,
+        73,
+        66,
+        65,
+        63,
+        62,
+        55
+      ]
+    },
+    {
+      "color": "blue",
+      "cells": [
+        72,
+        71
+      ]
+    },
+    {
+      "color": "ojama",
+      "cells": [
+        67
+      ]
+    }
+  ],
+  "next": [
+    {
+      "order": 1,
+      "colors": [
+        "blue",
+        "red"
+      ]
+    },
+    {
+      "order": 3,
+      "colors": [
+        "blue",
+        "red"
+      ]
+    },
+    {
+      "order": 5,
+      "colors": [
+        "yellow",
+        "red"
+      ]
+    },
+    {
+      "order": 7,
+      "colors": [
+        "yellow",
+        "yellow"
+      ]
+    },
+    {
+      "order": 9,
+      "colors": [
+        "green",
+        "red"
+      ]
+    }
+  ]
+}
