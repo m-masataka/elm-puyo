@@ -23,7 +23,7 @@ jobs:
           ref: gh-pages
 
       - name: install git
-        run: apt add git
+        run: apk add git
 
       - name: copy files
         run: |
