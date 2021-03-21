@@ -24,10 +24,10 @@ jobs:
 
       - name: copy files
         run: |
-          cp /tmp/main.js ./main.js
-          cp /tmp/src/main.css ./src/main.css
-          cp -r /tmp/api ./api
-          cp /tmp/index.html ./index.html
+          cp /tmp/code/main.js ./main.js
+          cp /tmp/code/src/main.css ./src/main.css
+          cp -r /tmp/code/api ./api
+          cp /tmp/code/index.html ./index.html
 
       - name: Commit files
         run: |
