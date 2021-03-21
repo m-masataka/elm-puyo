@@ -7090,7 +7090,7 @@ var author$project$Api$getGameIndex = elm$http$Http$request(
 		method: 'GET',
 		timeout: elm$core$Maybe$Nothing,
 		tracker: elm$core$Maybe$Nothing,
-		url: '/api/index'
+		url: 'api/index'
 	});
 var author$project$Types$Cells = F2(
 	function (color, cells) {
@@ -7149,7 +7149,7 @@ var author$project$Api$getNewBoard = function (path) {
 			method: 'GET',
 			timeout: elm$core$Maybe$Nothing,
 			tracker: elm$core$Maybe$Nothing,
-			url: '/' + path
+			url: path
 		});
 };
 var elm_community$list_extra$List$Extra$getAt = F2(
