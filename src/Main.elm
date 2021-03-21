@@ -1,3 +1,4 @@
+module Main exposing (..)
 import Browser
 import Debug
 import Time
@@ -434,7 +435,7 @@ update msg model =
                 start =
                     model.startBoard.next |> List.map (\c -> List.map stringToCell c.colors) |> List.head |> Maybe.withDefault [Empty, Empty] |> List.zip startPos
             in
-            ( { model | board = board, grippedPuyo = start, status = Normal, nextPuyo = next, chain = 0, maxChain = 0, score = 0, viewBoard = [], animation = NoMove, mode = model.tmpmode }
+            ( { model | board = board, grippedPuyo = start, status = Normal, nextPuyo = next, chain = 0, maxChain = 0, score = 0, viewBoard = [], animation = NoMove }
             , Cmd.none
             )
         ChangeMode ->

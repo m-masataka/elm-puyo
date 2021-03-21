@@ -69,9 +69,9 @@ viewMenu model =
             let
                 imgSrc = case model.mode of
                     Nazopuyo ->
-                        "/img/puyo_blue.gif"
+                        "img/puyo_blue.gif"
                     Tokopuyo ->
-                        "/img/puyo_red.gif"
+                        "img/puyo_red.gif"
             in
             div [ class "menu-container" ]
                 [ div [ class "mode-toggle" ]
@@ -85,9 +85,6 @@ viewMenu model =
                 , div []
                     [ div [ class "game-btn", onClick Start ]
                         [ img [src "img/start.png" ] []
-                        ]
-                    , div [ class "game-btn", onClick Restart ]
-                        [ img [src "img/restart.png" ] []
                         ]
                     ]
                 ]
@@ -172,7 +169,7 @@ viewBoard model =
                 , style "left" (String.fromFloat ((x * width) + width) ++ "px")
                 ] 
                 [ img
-                    [ src ("/img/puyo_"++ cellToString cell ++".png")
+                    [ src ("img/puyo_"++ cellToString cell ++".png")
                     , class "puyo"
                     ]
                     []

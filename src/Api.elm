@@ -51,7 +51,7 @@ getNewBoard path =
             , Http.header "Accept" "application/json"
             , Http.header "Content-Type" "application/json"
             ]
-        , url = "/" ++ path
+        , url = path
         , expect = Http.expectJson GotNewBoard boardApiDecoder
         , body = Http.emptyBody
         , timeout = Nothing
@@ -67,7 +67,7 @@ getGameIndex =
             , Http.header "Accept" "application/json"
             , Http.header "Content-Type" "application/json"
             ]
-        , url = "/api/index"
+        , url = "api/index"
         , expect = Http.expectJson GotGameIndex indexApiDecoder
         , body = Http.emptyBody
         , timeout = Nothing

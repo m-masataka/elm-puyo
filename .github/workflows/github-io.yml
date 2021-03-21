@@ -1,0 +1,16 @@
+name: Deploy Github.io
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    container:
+      image: codesimple/elm:0.19
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: elm make --output=main.js src/Main.elm

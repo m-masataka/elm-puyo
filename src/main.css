@@ -5,11 +5,11 @@
 
 @font-face {
 	font-family: PixelMplus12-Regular;
-	src: url('/font/PixelMplus12-Regular.ttf') format("truetype");
+	src: url('../font/PixelMplus12-Regular.ttf') format("truetype");
 }
 
 body {
-  background-image:url("/img/wall3.png");
+  background-image:url("../img/wall3.png");
   background-size: var(--cell-size);
 }
 
@@ -24,9 +24,9 @@ body {
 
 .menu-container {
   position: absolute;
-  top: 50px;
+  top: 0px;
   width: var(--board-size);
-  margin: 2em 0;
+  margin: 1em 0;
   font-weight: bold;
   font-family: PixelMplus12-Regular;
   color: #6091d3;/*文字色*/
@@ -114,7 +114,7 @@ body {
 }
 
 .game-panel {
-  background-image:url("/img/w.png");
+  background-image:url("../img/w.png");
   background-size: var(--cell-size);
   padding-top: var(--cell-size);
   margin: 0px;
