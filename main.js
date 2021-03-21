@@ -8613,7 +8613,7 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{animation: author$project$Types$NoMove, board: board, chain: 0, grippedPuyo: start, maxChain: 0, mode: model.tmpmode, nextPuyo: next, score: 0, status: author$project$Types$Normal, viewBoard: _List_Nil}),
+						{animation: author$project$Types$NoMove, board: board, chain: 0, grippedPuyo: start, maxChain: 0, nextPuyo: next, score: 0, status: author$project$Types$Normal, viewBoard: _List_Nil}),
 					elm$core$Platform$Cmd$none);
 			case 'ChangeMode':
 				var mode = function () {
@@ -9028,23 +9028,6 @@ var author$project$Views$viewMenu = function (model) {
 									_List_fromArray(
 										[
 											elm$html$Html$Attributes$src('img/start.png')
-										]),
-									_List_Nil)
-								])),
-							A2(
-							elm$html$Html$div,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('game-btn'),
-									elm$html$Html$Events$onClick(author$project$Types$Restart)
-								]),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$img,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$src('img/restart.png')
 										]),
 									_List_Nil)
 								]))
