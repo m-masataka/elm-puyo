@@ -14,3 +14,27 @@ jobs:
 
       - name: Install dependencies
         run: elm make --output=main.js src/Main.elm
+
+      - name: saving data
+        run: cp -r ./ /tmp/code
+      
+      - name: Checkout
+        uses: actions/checkout@gh-pages
+
+      - name: git setting
+        run: |
+          git config --local user.email "m.mizukoshi.wakuwaku@gmail.com"
+          git config --local user.name "m-masataka"
+
+      - name: copy files
+        run: |
+          cp /tmp/main.js ./main.js
+          cp /tmp/src/main.css ./src/main.css
+          cp -r /tmp/api ./api
+          cp /tmp/index.html ./index.html
+
+      - name: Commit files
+        run: |
+          git add .
+          git commit -m "update" -a
+          git push origin gh-pages
