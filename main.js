@@ -8953,9 +8953,9 @@ var author$project$Views$viewMenu = function (model) {
 		var imgSrc = function () {
 			var _n1 = model.mode;
 			if (_n1.$ === 'Nazopuyo') {
-				return '/img/puyo_blue.gif';
+				return 'img/puyo_blue.gif';
 			} else {
-				return '/img/puyo_red.gif';
+				return 'img/puyo_red.gif';
 			}
 		}();
 		return A2(
