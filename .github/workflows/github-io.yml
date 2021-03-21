@@ -10,7 +10,7 @@ jobs:
     container: codesimple/elm:0.19
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       - name: Install dependencies
         run: elm make --output=main.js src/Main.elm
@@ -18,8 +18,9 @@ jobs:
       - name: saving data
         run: cp -r ./ /tmp/code
       
-      - name: Checkout
-        uses: actions/checkout@gh-pages
+      - uses: actions/checkout@v2
+        with:
+          ref: gh-pages
 
       - name: git setting
         run: |
