@@ -22,11 +22,6 @@ jobs:
         with:
           ref: gh-pages
 
-      - name: git setting
-        run: |
-          git config --local user.email "m.mizukoshi.wakuwaku@gmail.com"
-          git config --local user.name "m-masataka"
-
       - name: copy files
         run: |
           cp /tmp/main.js ./main.js
