@@ -5376,7 +5376,9 @@ var $author$project$Types$Model = function (board) {
 													return function (gameInfo) {
 														return function (gameIndex) {
 															return function (viewCondition) {
-																return {animation: animation, board: board, chain: chain, gameIndex: gameIndex, gameInfo: gameInfo, grippedPuyo: grippedPuyo, maxChain: maxChain, mode: mode, nextPuyo: nextPuyo, score: score, startBoard: startBoard, status: status, timecounter: timecounter, tmpmode: tmpmode, viewBoard: viewBoard, viewCondition: viewCondition};
+																return function (speed) {
+																	return {animation: animation, board: board, chain: chain, gameIndex: gameIndex, gameInfo: gameInfo, grippedPuyo: grippedPuyo, maxChain: maxChain, mode: mode, nextPuyo: nextPuyo, score: score, speed: speed, startBoard: startBoard, status: status, timecounter: timecounter, tmpmode: tmpmode, viewBoard: viewBoard, viewCondition: viewCondition};
+																};
 															};
 														};
 													};
@@ -5704,7 +5706,7 @@ var $author$project$Main$initModel = function (status) {
 				[$author$project$Types$Red, $author$project$Types$Blue]),
 				_List_fromArray(
 				[$author$project$Types$Green, $author$project$Types$Yellow])
-			]))(1)(0)(0)(0)(_List_Nil)($author$project$Types$NoMove)($author$project$Main$initStartBoard)($author$project$Types$Tokopuyo)($author$project$Types$Tokopuyo)($author$project$Main$initGameInfo)($author$project$Main$initIndexGame)('');
+			]))(1)(0)(0)(0)(_List_Nil)($author$project$Types$NoMove)($author$project$Main$initStartBoard)($author$project$Types$Tokopuyo)($author$project$Types$Tokopuyo)($author$project$Main$initGameInfo)($author$project$Main$initIndexGame)('')(30);
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
@@ -8368,7 +8370,7 @@ var $author$project$Main$update = F2(
 						var _v16 = model.animation;
 						switch (_v16.$) {
 							case 'DropPuyo':
-								return (model.timecounter === 10) ? _Utils_Tuple3(
+								return _Utils_eq(model.timecounter, 50 - model.speed) ? _Utils_Tuple3(
 									$author$project$Types$NoMove,
 									A2($author$project$Board$setViewBoard, model.board, ngp),
 									0) : _Utils_Tuple3(model.animation, model.viewBoard, model.timecounter + 1);
@@ -8414,7 +8416,7 @@ var $author$project$Main$update = F2(
 										model.timecounter + 1);
 								}
 							default:
-								return (model.timecounter === 10) ? _Utils_Tuple3(
+								return _Utils_eq(model.timecounter, 50 - model.speed) ? _Utils_Tuple3(
 									$author$project$Types$NoMove,
 									A2($author$project$Board$setViewBoard, model.board, ngp),
 									0) : _Utils_Tuple3(model.animation, model.viewBoard, model.timecounter + 1);
@@ -8604,6 +8606,18 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{animation: $author$project$Types$NoMove, board: board, chain: 0, grippedPuyo: start, maxChain: 0, nextPuyo: next, score: 0, status: $author$project$Types$Normal, viewBoard: _List_Nil}),
+					$elm$core$Platform$Cmd$none);
+			case 'InputSpeed':
+				var str = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							speed: A2(
+								$elm$core$Maybe$withDefault,
+								0,
+								$elm$core$String$toInt(str))
+						}),
 					$elm$core$Platform$Cmd$none);
 			case 'ChangeMode':
 				var mode = function () {
@@ -8805,6 +8819,43 @@ var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id'
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $author$project$Types$InputSpeed = function (a) {
+	return {$: 'InputSpeed', a: a};
+};
+var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
+var $elm$html$Html$Attributes$min = $elm$html$Html$Attributes$stringProperty('min');
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Types$GetNewBoard = function (a) {
 	return {$: 'GetNewBoard', a: a};
 };
@@ -8928,7 +8979,24 @@ var $author$project$Views$viewGame = function (model) {
 				]),
 			_List_fromArray(
 				[
-					A2($elm$html$Html$div, _List_Nil, _List_Nil)
+					A2(
+					$elm$html$Html$div,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$type_('range'),
+									$elm$html$Html$Attributes$min('0'),
+									$elm$html$Html$Attributes$max('40'),
+									$elm$html$Html$Attributes$value(
+									$elm$core$String$fromInt(model.speed)),
+									$elm$html$Html$Events$onInput($author$project$Types$InputSpeed)
+								]),
+							_List_Nil)
+						]))
 				]));
 	}
 };
