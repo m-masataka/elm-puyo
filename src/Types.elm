@@ -29,6 +29,7 @@ type alias Model =
     , gameInfo: GameInfo
     , gameIndex: List GameInfo
     , viewCondition: String
+    , speed: Int
     }
 
 type alias GameInfo =
@@ -100,6 +101,7 @@ type Msg
     | Start
     | Restart
     | ChangeMode
+    | InputSpeed String
     | GetNewBoard String
     | GotNewBoard (Result Http.Error StartBoard)
     | GotGameIndex (Result Http.Error (List GameInfo))

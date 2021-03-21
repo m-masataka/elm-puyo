@@ -26,12 +26,6 @@ jobs:
           git config --global user.email "m.mizukoshi.wakuwaku@gmail.com"
           git config --global user.name "m-masataka"
       
-      - name: test
-        run: ls -al
-
-      - name: test
-        run: pwd
-
       - uses: actions/checkout@v2
         with:
           ref: gh-pages

@@ -25,7 +25,7 @@ init _ =
 
 initModel : Status -> Model
 initModel status =
-    Model (initBoard []) (List.zip startPos [Blue, Blue]) status [[Red, Blue], [Green, Yellow]] 1 0 0 0 [] NoMove initStartBoard Tokopuyo Tokopuyo initGameInfo initIndexGame ""
+    Model (initBoard []) (List.zip startPos [Blue, Blue]) status [[Red, Blue], [Green, Yellow]] 1 0 0 0 [] NoMove initStartBoard Tokopuyo Tokopuyo initGameInfo initIndexGame "" 30
 
 initGameInfo : GameInfo
 initGameInfo =
@@ -292,7 +292,7 @@ update msg model =
                         _ ->
                             case model.animation of
                                 DropPuyo ->
-                                    if model.timecounter  == 10 then
+                                    if model.timecounter  == (50 - model.speed) then
                                         (NoMove, Board.setViewBoard model.board ngp, 0)
                                     else
                                         (model.animation, model.viewBoard, model.timecounter + 1)
@@ -322,7 +322,7 @@ update msg model =
                                             , model.timecounter + 1
                                             )
                                 _ ->
-                                    if model.timecounter == 10 then
+                                    if model.timecounter == ( 50 - model.speed ) then
                                         (NoMove, Board.setViewBoard model.board ngp, 0)
                                     else
                                         (model.animation, model.viewBoard, model.timecounter + 1)
@@ -436,6 +436,10 @@ update msg model =
                     model.startBoard.next |> List.map (\c -> List.map stringToCell c.colors) |> List.head |> Maybe.withDefault [Empty, Empty] |> List.zip startPos
             in
             ( { model | board = board, grippedPuyo = start, status = Normal, nextPuyo = next, chain = 0, maxChain = 0, score = 0, viewBoard = [], animation = NoMove }
+            , Cmd.none
+            )
+        InputSpeed str ->
+            ( { model | speed = String.toInt str |> Maybe.withDefault 0 }
             , Cmd.none
             )
         ChangeMode ->

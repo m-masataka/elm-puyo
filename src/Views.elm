@@ -5,7 +5,7 @@ import Board exposing (..)
 import Array exposing (Array)
 import Html.Attributes exposing (..)
 import Html exposing (..)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 
 
 -- VIEW
@@ -101,7 +101,16 @@ viewGame model =
                 ]
         Tokopuyo ->
             div [ class "rule-board"]
-                [ div [] []
+                [ div []
+                    [ input
+                        [ type_ "range"
+                        , Html.Attributes.min "0"
+                        , Html.Attributes.max "40"
+                        , value <| String.fromInt model.speed
+                        , onInput InputSpeed
+                        ]
+                        []
+                    ]
                 ]
 
 viewStageInfo : GameInfo -> Html Msg
