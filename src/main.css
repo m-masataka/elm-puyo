@@ -5,11 +5,11 @@
 
 @font-face {
 	font-family: PixelMplus12-Regular;
-	src: url('/font/PixelMplus12-Regular.ttf') format("truetype");
+	src: url('/elm-puyo/font/PixelMplus12-Regular.ttf') format("truetype");
 }
 
 body {
-  background-image:url("/img/wall3.png");
+  background-image:url("/elm-puyo/img/wall3.png");
   background-size: var(--cell-size);
 }
 

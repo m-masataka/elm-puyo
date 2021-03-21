@@ -5063,25 +5063,23 @@ var author$project$Main$initNext = _List_fromArray(
 var author$project$Main$initStartBoard = {board: author$project$Main$initCells, conditions: author$project$Main$initCondition, level: 'dom', next: author$project$Main$initNext};
 var author$project$Types$Blue = {$: 'Blue'};
 var author$project$Types$Green = {$: 'Green'};
-var author$project$Types$Model = function (currentPath) {
-	return function (board) {
-		return function (grippedPuyo) {
-			return function (status) {
-				return function (nextPuyo) {
-					return function (timecounter) {
-						return function (chain) {
-							return function (maxChain) {
-								return function (score) {
-									return function (viewBoard) {
-										return function (animation) {
-											return function (startBoard) {
-												return function (mode) {
-													return function (tmpmode) {
-														return function (gameInfo) {
-															return function (gameIndex) {
-																return function (viewCondition) {
-																	return {animation: animation, board: board, chain: chain, currentPath: currentPath, gameIndex: gameIndex, gameInfo: gameInfo, grippedPuyo: grippedPuyo, maxChain: maxChain, mode: mode, nextPuyo: nextPuyo, score: score, startBoard: startBoard, status: status, timecounter: timecounter, tmpmode: tmpmode, viewBoard: viewBoard, viewCondition: viewCondition};
-																};
+var author$project$Types$Model = function (board) {
+	return function (grippedPuyo) {
+		return function (status) {
+			return function (nextPuyo) {
+				return function (timecounter) {
+					return function (chain) {
+						return function (maxChain) {
+							return function (score) {
+								return function (viewBoard) {
+									return function (animation) {
+										return function (startBoard) {
+											return function (mode) {
+												return function (tmpmode) {
+													return function (gameInfo) {
+														return function (gameIndex) {
+															return function (viewCondition) {
+																return {animation: animation, board: board, chain: chain, gameIndex: gameIndex, gameInfo: gameInfo, grippedPuyo: grippedPuyo, maxChain: maxChain, mode: mode, nextPuyo: nextPuyo, score: score, startBoard: startBoard, status: status, timecounter: timecounter, tmpmode: tmpmode, viewBoard: viewBoard, viewCondition: viewCondition};
 															};
 														};
 													};
@@ -5110,23 +5108,22 @@ var elm$core$Tuple$pair = F2(
 		return _Utils_Tuple2(a, b);
 	});
 var elm_community$list_extra$List$Extra$zip = elm$core$List$map2(elm$core$Tuple$pair);
-var author$project$Main$initModel = F2(
-	function (currentPath, status) {
-		return author$project$Types$Model(currentPath)(
-			author$project$Board$initBoard(_List_Nil))(
-			A2(
-				elm_community$list_extra$List$Extra$zip,
-				author$project$Types$startPos,
-				_List_fromArray(
-					[author$project$Types$Blue, author$project$Types$Blue])))(status)(
+var author$project$Main$initModel = function (status) {
+	return author$project$Types$Model(
+		author$project$Board$initBoard(_List_Nil))(
+		A2(
+			elm_community$list_extra$List$Extra$zip,
+			author$project$Types$startPos,
 			_List_fromArray(
-				[
-					_List_fromArray(
-					[author$project$Types$Red, author$project$Types$Blue]),
-					_List_fromArray(
-					[author$project$Types$Green, author$project$Types$Yellow])
-				]))(1)(0)(0)(0)(_List_Nil)(author$project$Types$NoMove)(author$project$Main$initStartBoard)(author$project$Types$Tokopuyo)(author$project$Types$Tokopuyo)(author$project$Main$initGameInfo)(author$project$Main$initIndexGame)('');
-	});
+				[author$project$Types$Blue, author$project$Types$Blue])))(status)(
+		_List_fromArray(
+			[
+				_List_fromArray(
+				[author$project$Types$Red, author$project$Types$Blue]),
+				_List_fromArray(
+				[author$project$Types$Green, author$project$Types$Yellow])
+			]))(1)(0)(0)(0)(_List_Nil)(author$project$Types$NoMove)(author$project$Main$initStartBoard)(author$project$Types$Tokopuyo)(author$project$Types$Tokopuyo)(author$project$Main$initGameInfo)(author$project$Main$initIndexGame)('');
+};
 var author$project$Types$StartMenu = {$: 'StartMenu'};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
@@ -5466,9 +5463,9 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 	});
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var author$project$Main$init = function (currentPath) {
+var author$project$Main$init = function (_n0) {
 	return _Utils_Tuple2(
-		A2(author$project$Main$initModel, currentPath, author$project$Types$StartMenu),
+		author$project$Main$initModel(author$project$Types$StartMenu),
 		elm$core$Platform$Cmd$none);
 };
 var author$project$Types$Down = {$: 'Down'};
@@ -8559,7 +8556,7 @@ var author$project$Main$update = F2(
 						if (_n36.$ === 'Tokopuyo') {
 							var _n37 = model.tmpmode;
 							if (_n37.$ === 'Nazopuyo') {
-								return A2(author$project$Main$initModel, model.currentPath, author$project$Types$Normal);
+								return author$project$Main$initModel(author$project$Types$Normal);
 							} else {
 								return _Utils_update(
 									model,
@@ -8774,7 +8771,7 @@ var author$project$Views$viewBoard = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$Attributes$src(
-								model.currentPath + ('/img/puyo_' + (author$project$Board$cellToString(cell) + '.png'))),
+								'/img/puyo_' + (author$project$Board$cellToString(cell) + '.png')),
 								elm$html$Html$Attributes$class('puyo')
 							]),
 						_List_Nil)
@@ -8816,96 +8813,95 @@ var elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		elm$json$Json$Decode$succeed(msg));
 };
-var author$project$Views$viewStageInfo = F2(
-	function (currentPath, stageInfo) {
-		return A2(
-			elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$table,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$tr,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$td,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('レベル')
-										])),
-									A2(
-									elm$html$Html$td,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text(stageInfo.level)
-										]))
-								])),
-							A2(
-							elm$html$Html$tr,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$td,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('条件')
-										])),
-									A2(
-									elm$html$Html$td,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text(
-											A3(
-												author$project$Board$readableCondition,
-												stageInfo.conditions.condition,
-												A2(elm$core$Maybe$withDefault, '', stageInfo.conditions.c),
-												A2(elm$core$Maybe$withDefault, 0, stageInfo.conditions.n)))
-										]))
-								])),
-							A2(
-							elm$html$Html$tr,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$td,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$div,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$class('game-btn'),
-													elm$html$Html$Events$onClick(
-													author$project$Types$GetNewBoard(stageInfo.path))
-												]),
-											_List_fromArray(
-												[
-													A2(
-													elm$html$Html$img,
-													_List_fromArray(
-														[
-															elm$html$Html$Attributes$src(currentPath + 'img/start.png')
-														]),
-													_List_Nil)
-												]))
-										]))
-								]))
-						]))
-				]));
-	});
+var author$project$Views$viewStageInfo = function (stageInfo) {
+	return A2(
+		elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$table,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$tr,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$td,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('レベル')
+									])),
+								A2(
+								elm$html$Html$td,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text(stageInfo.level)
+									]))
+							])),
+						A2(
+						elm$html$Html$tr,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$td,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('条件')
+									])),
+								A2(
+								elm$html$Html$td,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text(
+										A3(
+											author$project$Board$readableCondition,
+											stageInfo.conditions.condition,
+											A2(elm$core$Maybe$withDefault, '', stageInfo.conditions.c),
+											A2(elm$core$Maybe$withDefault, 0, stageInfo.conditions.n)))
+									]))
+							])),
+						A2(
+						elm$html$Html$tr,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$td,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$div,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$class('game-btn'),
+												elm$html$Html$Events$onClick(
+												author$project$Types$GetNewBoard(stageInfo.path))
+											]),
+										_List_fromArray(
+											[
+												A2(
+												elm$html$Html$img,
+												_List_fromArray(
+													[
+														elm$html$Html$Attributes$src('img/start.png')
+													]),
+												_List_Nil)
+											]))
+									]))
+							]))
+					]))
+			]));
+};
 var author$project$Views$viewGame = function (model) {
 	var _n0 = model.mode;
 	if (_n0.$ === 'Nazopuyo') {
@@ -8923,10 +8919,7 @@ var author$project$Views$viewGame = function (model) {
 						[
 							elm$html$Html$Attributes$class('slides')
 						]),
-					A2(
-						elm$core$List$map,
-						author$project$Views$viewStageInfo(model.currentPath),
-						model.gameIndex))
+					A2(elm$core$List$map, author$project$Views$viewStageInfo, model.gameIndex))
 				]));
 	} else {
 		return A2(
@@ -8960,9 +8953,9 @@ var author$project$Views$viewMenu = function (model) {
 		var imgSrc = function () {
 			var _n1 = model.mode;
 			if (_n1.$ === 'Nazopuyo') {
-				return model.currentPath + '/img/puyo_blue.gif';
+				return '/img/puyo_blue.gif';
 			} else {
-				return model.currentPath + '/img/puyo_red.gif';
+				return '/img/puyo_red.gif';
 			}
 		}();
 		return A2(
@@ -9034,7 +9027,7 @@ var author$project$Views$viewMenu = function (model) {
 									elm$html$Html$img,
 									_List_fromArray(
 										[
-											elm$html$Html$Attributes$src(model.currentPath + 'img/start.png')
+											elm$html$Html$Attributes$src('img/start.png')
 										]),
 									_List_Nil)
 								])),
@@ -9051,7 +9044,7 @@ var author$project$Views$viewMenu = function (model) {
 									elm$html$Html$img,
 									_List_fromArray(
 										[
-											elm$html$Html$Attributes$src(model.currentPath + 'img/restart.png')
+											elm$html$Html$Attributes$src('img/restart.png')
 										]),
 									_List_Nil)
 								]))
@@ -9061,62 +9054,61 @@ var author$project$Views$viewMenu = function (model) {
 		return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 	}
 };
-var author$project$Views$viewNext = F2(
-	function (l, currentPath) {
-		var width = 25;
-		var nextcell = function (cell) {
-			return A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('next-cell')
-					]),
-				_List_fromArray(
-					[
-						function () {
-						if (cell.$ === 'Empty') {
-							return A2(elm$html$Html$img, _List_Nil, _List_Nil);
-						} else {
-							return A2(
-								elm$html$Html$img,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$src(
-										currentPath + ('img/puyo_' + (author$project$Board$cellToString(cell) + '.png'))),
-										elm$html$Html$Attributes$class('puyo')
-									]),
-								_List_Nil);
-						}
-					}()
-					]));
-		};
-		var nextSet = function (_n0) {
-			var n = _n0.a;
-			var l_ = _n0.b;
-			return A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('view-next'),
-						A2(
-						elm$html$Html$Attributes$style,
-						'width',
-						elm$core$String$fromInt(width - (n * 1)) + 'px'),
-						A2(elm$html$Html$Attributes$style, 'margin-bottom', '10px')
-					]),
-				A2(elm$core$List$map, nextcell, l_));
-		};
+var author$project$Views$viewNext = function (l) {
+	var width = 25;
+	var nextcell = function (cell) {
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('next-puyo')
+					elm$html$Html$Attributes$class('next-cell')
 				]),
-			A2(
-				elm$core$List$map,
-				nextSet,
-				A2(elm$core$List$indexedMap, elm$core$Tuple$pair, l)));
-	});
+			_List_fromArray(
+				[
+					function () {
+					if (cell.$ === 'Empty') {
+						return A2(elm$html$Html$img, _List_Nil, _List_Nil);
+					} else {
+						return A2(
+							elm$html$Html$img,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$src(
+									'img/puyo_' + (author$project$Board$cellToString(cell) + '.png')),
+									elm$html$Html$Attributes$class('puyo')
+								]),
+							_List_Nil);
+					}
+				}()
+				]));
+	};
+	var nextSet = function (_n0) {
+		var n = _n0.a;
+		var l_ = _n0.b;
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('view-next'),
+					A2(
+					elm$html$Html$Attributes$style,
+					'width',
+					elm$core$String$fromInt(width - (n * 1)) + 'px'),
+					A2(elm$html$Html$Attributes$style, 'margin-bottom', '10px')
+				]),
+			A2(elm$core$List$map, nextcell, l_));
+	};
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('next-puyo')
+			]),
+		A2(
+			elm$core$List$map,
+			nextSet,
+			A2(elm$core$List$indexedMap, elm$core$Tuple$pair, l)));
+};
 var elm$core$String$cons = _String_cons;
 var elm$core$String$fromChar = function (_char) {
 	return A2(elm$core$String$cons, _char, '');
@@ -9156,7 +9148,7 @@ var author$project$Views$viewScore = function (model) {
 				elm$html$Html$img,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$src(model.currentPath + 'img/frame.png')
+						elm$html$Html$Attributes$src('img/frame.png')
 					]),
 				_List_Nil),
 				A2(
@@ -9213,7 +9205,7 @@ var author$project$Views$view = function (model) {
 										elm$html$Html$img,
 										_List_fromArray(
 											[
-												elm$html$Html$Attributes$src(model.currentPath + 'img/menu.png')
+												elm$html$Html$Attributes$src('img/menu.png')
 											]),
 										_List_Nil)
 									])),
@@ -9230,7 +9222,7 @@ var author$project$Views$view = function (model) {
 										elm$html$Html$img,
 										_List_fromArray(
 											[
-												elm$html$Html$Attributes$src(model.currentPath + 'img/stop.png')
+												elm$html$Html$Attributes$src('img/stop.png')
 											]),
 										_List_Nil)
 									])),
@@ -9247,7 +9239,7 @@ var author$project$Views$view = function (model) {
 										elm$html$Html$img,
 										_List_fromArray(
 											[
-												elm$html$Html$Attributes$src(model.currentPath + 'img/start.png')
+												elm$html$Html$Attributes$src('img/start.png')
 											]),
 										_List_Nil)
 									])),
@@ -9264,7 +9256,7 @@ var author$project$Views$view = function (model) {
 										elm$html$Html$img,
 										_List_fromArray(
 											[
-												elm$html$Html$Attributes$src(model.currentPath + 'img/restart.png')
+												elm$html$Html$Attributes$src('img/restart.png')
 											]),
 										_List_Nil)
 									])),
@@ -9280,7 +9272,7 @@ var author$project$Views$view = function (model) {
 										elm$html$Html$img,
 										_List_fromArray(
 											[
-												elm$html$Html$Attributes$src(model.currentPath + 'img/frame.png')
+												elm$html$Html$Attributes$src('img/frame.png')
 											]),
 										_List_Nil),
 										A2(
@@ -9300,7 +9292,7 @@ var author$project$Views$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								A2(author$project$Views$viewNext, model.nextPuyo, model.currentPath),
+								author$project$Views$viewNext(model.nextPuyo),
 								A2(
 								elm$html$Html$div,
 								_List_fromArray(
@@ -9340,7 +9332,7 @@ var author$project$Views$view = function (model) {
 												elm$html$Html$img,
 												_List_fromArray(
 													[
-														elm$html$Html$Attributes$src(model.currentPath + 'img/frame.png')
+														elm$html$Html$Attributes$src('img/frame.png')
 													]),
 												_List_Nil),
 												A2(
@@ -9376,4 +9368,5 @@ var author$project$Views$view = function (model) {
 var elm$browser$Browser$element = _Browser_element;
 var author$project$Main$main = elm$browser$Browser$element(
 	{init: author$project$Main$init, subscriptions: author$project$Main$subscriptions, update: author$project$Main$update, view: author$project$Views$view});
-_Platform_export({'Main':{'init':author$project$Main$main(elm$json$Json$Decode$string)(0)}});}(this));
+_Platform_export({'Main':{'init':author$project$Main$main(
+	elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
