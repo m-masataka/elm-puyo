@@ -6,8 +6,8 @@ on:
 
 jobs:
   deploy:
-    container:
-      image: codesimple/elm:0.19
+    runs-on: ubuntu-latest
+    container: codesimple/elm:0.19
 
     steps:
       - uses: actions/checkout@v2
