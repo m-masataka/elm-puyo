@@ -8771,7 +8771,7 @@ var author$project$Views$viewBoard = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$Attributes$src(
-								'/img/puyo_' + (author$project$Board$cellToString(cell) + '.png')),
+								'img/puyo_' + (author$project$Board$cellToString(cell) + '.png')),
 								elm$html$Html$Attributes$class('puyo')
 							]),
 						_List_Nil)
